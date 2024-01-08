@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-
 import streamlit as st
 import yfinance as yf
 import plotly.graph_objects as go
@@ -13,7 +12,6 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-
 
 # Fetch the list of S&P 500 components from Wikipedia
 url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
@@ -293,7 +291,6 @@ def print_stock_news(stock_symbol):
         top_news.append(news_info)
     return top_news
 
-
 if selected_stock:
     top_5_news = print_stock_news(selected_stock)
 
@@ -311,7 +308,6 @@ with news:
 
         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
         
-
 @st.cache_data
 def get_fundamental_metrics(stock_symbol):
     stock = yf.Ticker(stock_symbol)
@@ -339,7 +335,6 @@ with fundamental_data:
         st.write("Dividend Yield: Dividend yield is a financial ratio that indicates how much a company pays out in dividends each year relative to its share price. It is usually expressed as a percentage.")
         st.write("Earnings Per Share (EPS): Earnings per share is a measure of a company's profitability. It represents the portion of a company's profit allocated to each outstanding share of common stock.")
         st.write("Beta: Beta measures a stock's volatility in relation to the overall market. A beta greater than 1 indicates the stock is more volatile than the market, while a beta less than 1 indicates lower volatility.")
-
 
     st.subheader(f"Fundamental Data for {selected_stock}")
 
