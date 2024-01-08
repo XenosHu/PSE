@@ -13,6 +13,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
+from fastquant import get_pse_data
+
 # Fetch the list of S&P 500 components from Wikipedia
 url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
 sp500_data = pd.read_html(url)[0]
@@ -117,6 +119,12 @@ def get_stock_data(stock_symbol, start_date, end_date):
     stock_data = yf.download(stock_symbol, start=start_date, end=end_date)
     return stock_data
 
+@st.cache_data
+def get_stock_data_pse(stock_symbol, start_date, end_date):
+    
+    stock_data = get_pse_data(stock_symbol, start=start_date, end=end_date)
+    return stock_data
+
 
 
 @st.cache_data
@@ -170,7 +178,10 @@ if start_date >= end_date:
     st.error("Error: Start date must be before end date.")
     
 # Fetch data and display price chart
-stock_data = get_stock_data(selected_stock, start_date, end_date)
+if index_name == "Philippines Stock Exchange":
+    stock_data = get_stock_data_pse(selected_stock, start_date, end_date)
+else:
+    stock_data = get_stock_data(selected_stock, start_date, end_date)
 other_data = get_currency(selected_stock)
 
 
@@ -316,253 +327,253 @@ analyzer = SentimentIntensityAnalyzer()
 
 #         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
         
-@st.cache_data
-def get_fundamental_metrics(stock_symbol):
-    stock = yf.Ticker(stock_symbol)
-    info = stock.info
+# @st.cache_data
+# def get_fundamental_metrics(stock_symbol):
+#     stock = yf.Ticker(stock_symbol)
+#     info = stock.info
 
-    # Map API response fields to desired metrics
-    fundamental_metrics = {
-        "Market Cap": info.get("marketCap"),
-        "Forward P/E": info.get("forwardPE"),
-        "Trailing P/E": info.get("trailingPE"),
-        "Dividend Yield": info.get("dividendYield") * 100 if info.get("dividendYield") else None,
-        "Earnings Per Share (EPS)": info.get("trailingEps"),
-        "Beta": info.get("beta")
-    }
+#     # Map API response fields to desired metrics
+#     fundamental_metrics = {
+#         "Market Cap": info.get("marketCap"),
+#         "Forward P/E": info.get("forwardPE"),
+#         "Trailing P/E": info.get("trailingPE"),
+#         "Dividend Yield": info.get("dividendYield") * 100 if info.get("dividendYield") else None,
+#         "Earnings Per Share (EPS)": info.get("trailingEps"),
+#         "Beta": info.get("beta")
+#     }
 
-    return fundamental_metrics
+#     return fundamental_metrics
 
 
-with fundamental_data:
+# with fundamental_data:
     
-    with st.expander("Definitions of Fundamental Data"):
-        st.write("Market Cap: Market capitalization is the total value of a company's outstanding shares of stock. It is calculated by multiplying the stock's current market price by its total number of outstanding shares.")
-        st.write("Forward P/E: Forward price-to-earnings (P/E) ratio is a valuation ratio that measures a company's current share price relative to its estimated earnings per share for the next year.")
-        st.write("Trailing P/E: Trailing price-to-earnings (P/E) ratio is a valuation ratio that measures a company's current share price relative to its earnings per share over the past 12 months.")
-        st.write("Dividend Yield: Dividend yield is a financial ratio that indicates how much a company pays out in dividends each year relative to its share price. It is usually expressed as a percentage.")
-        st.write("Earnings Per Share (EPS): Earnings per share is a measure of a company's profitability. It represents the portion of a company's profit allocated to each outstanding share of common stock.")
-        st.write("Beta: Beta measures a stock's volatility in relation to the overall market. A beta greater than 1 indicates the stock is more volatile than the market, while a beta less than 1 indicates lower volatility.")
+#     with st.expander("Definitions of Fundamental Data"):
+#         st.write("Market Cap: Market capitalization is the total value of a company's outstanding shares of stock. It is calculated by multiplying the stock's current market price by its total number of outstanding shares.")
+#         st.write("Forward P/E: Forward price-to-earnings (P/E) ratio is a valuation ratio that measures a company's current share price relative to its estimated earnings per share for the next year.")
+#         st.write("Trailing P/E: Trailing price-to-earnings (P/E) ratio is a valuation ratio that measures a company's current share price relative to its earnings per share over the past 12 months.")
+#         st.write("Dividend Yield: Dividend yield is a financial ratio that indicates how much a company pays out in dividends each year relative to its share price. It is usually expressed as a percentage.")
+#         st.write("Earnings Per Share (EPS): Earnings per share is a measure of a company's profitability. It represents the portion of a company's profit allocated to each outstanding share of common stock.")
+#         st.write("Beta: Beta measures a stock's volatility in relation to the overall market. A beta greater than 1 indicates the stock is more volatile than the market, while a beta less than 1 indicates lower volatility.")
 
-    st.subheader(f"Fundamental Data for {selected_stock}")
+#     st.subheader(f"Fundamental Data for {selected_stock}")
 
-    fundamental_metrics = get_fundamental_metrics(selected_stock)
+#     fundamental_metrics = get_fundamental_metrics(selected_stock)
 
-    for metric, value in fundamental_metrics.items():
-        st.write(f"{metric}: {value}")   
+#     for metric, value in fundamental_metrics.items():
+#         st.write(f"{metric}: {value}")   
 
-st.header("Stock Price Comparison")
+# st.header("Stock Price Comparison")
 
-# Get user input for two stock symbols from the list of tickers
+# # Get user input for two stock symbols from the list of tickers
 
-selected_stock2 = st.selectbox("Select the second stock symbol", ticker_list)
+# selected_stock2 = st.selectbox("Select the second stock symbol", ticker_list)
 
-# Fetch data for second stock
-stock_data2 = get_stock_data(selected_stock2, start_date, end_date)
-
-
-
-if stock_data.empty or stock_data2.empty:
-    st.write("Data not available for one or more selected stock symbols in the specified date range.")
-
-else:
-    # Create an area chart for the first stock
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=stock_data.index,
-                             y=stock_data['Close'],
-                             mode='lines',
-                             fill='tozeroy',  # Create an area chart
-                             name=f"{selected_stock} Closing Price"))
-
-    # Create an area chart for the closing prices of the second stock
-    fig.add_trace(go.Scatter(x=stock_data2.index,
-                            y=stock_data2['Close'],
-                            mode='lines',
-                            fill='tozeroy',  # Create an area chart
-                            name=f"{selected_stock2} Closing Price"))
-
-    fig.update_layout(title='Stock Price Comparison',
-                        xaxis_title='Date',
-                        yaxis_title=f'Price ({other_data[1]})',
-                        legend=dict(x=0, y=1.2))
-
-    st.plotly_chart(fig)    
-
-st.header(f"{index_selection} Index Performance")
-
-index_timeframe = ['5 Day', '1 Week', '1 Month', '6 Months', 'YTD', '1 Year', '5 Year']
-selected_index_timeframe = st.selectbox("Select a timeframe for Index Price", index_timeframe)
-
-# Fetch historical price data for the selected index
-index_his_data = get_index_data(index_symbol, selected_index_timeframe)
+# # Fetch data for second stock
+# stock_data2 = get_stock_data(selected_stock2, start_date, end_date)
 
 
-if index_his_data.empty:
-    st.write("Data not available for the selected index.")
-else:
-    # Create a line chart for the index price
-    fig = go.Figure(data=go.Candlestick(x=index_his_data.index,
-                                       open=index_his_data['Open'],
-                                       high=index_his_data['High'],
-                                       low=index_his_data['Low'],
-                                       close=index_his_data['Close']))
 
-    # Customize the chart layout
-    fig.update_layout(xaxis_title='Date',
-                      yaxis_title=f'Price ({other_data[1]})',
-                      legend=dict(x=0, y=1.2))
+# if stock_data.empty or stock_data2.empty:
+#     st.write("Data not available for one or more selected stock symbols in the specified date range.")
 
-    # Display the chart in the Streamlit app
-    st.plotly_chart(fig)
+# else:
+#     # Create an area chart for the first stock
+#     fig = go.Figure()
+#     fig.add_trace(go.Scatter(x=stock_data.index,
+#                              y=stock_data['Close'],
+#                              mode='lines',
+#                              fill='tozeroy',  # Create an area chart
+#                              name=f"{selected_stock} Closing Price"))
 
-def fetch_market_cap_data(index_tickers):
-    market_cap_data = {}
-    sector_data = {}
+#     # Create an area chart for the closing prices of the second stock
+#     fig.add_trace(go.Scatter(x=stock_data2.index,
+#                             y=stock_data2['Close'],
+#                             mode='lines',
+#                             fill='tozeroy',  # Create an area chart
+#                             name=f"{selected_stock2} Closing Price"))
+
+#     fig.update_layout(title='Stock Price Comparison',
+#                         xaxis_title='Date',
+#                         yaxis_title=f'Price ({other_data[1]})',
+#                         legend=dict(x=0, y=1.2))
+
+#     st.plotly_chart(fig)    
+
+# st.header(f"{index_selection} Index Performance")
+
+# index_timeframe = ['5 Day', '1 Week', '1 Month', '6 Months', 'YTD', '1 Year', '5 Year']
+# selected_index_timeframe = st.selectbox("Select a timeframe for Index Price", index_timeframe)
+
+# # Fetch historical price data for the selected index
+# index_his_data = get_index_data(index_symbol, selected_index_timeframe)
+
+
+# if index_his_data.empty:
+#     st.write("Data not available for the selected index.")
+# else:
+#     # Create a line chart for the index price
+#     fig = go.Figure(data=go.Candlestick(x=index_his_data.index,
+#                                        open=index_his_data['Open'],
+#                                        high=index_his_data['High'],
+#                                        low=index_his_data['Low'],
+#                                        close=index_his_data['Close']))
+
+#     # Customize the chart layout
+#     fig.update_layout(xaxis_title='Date',
+#                       yaxis_title=f'Price ({other_data[1]})',
+#                       legend=dict(x=0, y=1.2))
+
+#     # Display the chart in the Streamlit app
+#     st.plotly_chart(fig)
+
+# def fetch_market_cap_data(index_tickers):
+#     market_cap_data = {}
+#     sector_data = {}
     
-    for ticker in index_tickers:
-        try:
-            stock_info = yf.Ticker(ticker).info
-            if "marketCap" in stock_info and stock_info["marketCap"]:
+#     for ticker in index_tickers:
+#         try:
+#             stock_info = yf.Ticker(ticker).info
+#             if "marketCap" in stock_info and stock_info["marketCap"]:
                 
-                market_cap_data[ticker] = {
-                    "MarketCap": float(stock_info["marketCap"]),
-                    "Ticker": (ticker)
-                }
+#                 market_cap_data[ticker] = {
+#                     "MarketCap": float(stock_info["marketCap"]),
+#                     "Ticker": (ticker)
+#                 }
                 
-                if "sector" in stock_info and stock_info["sector"]:
-                    sector_data[ticker] = {
-                        "Sector": stock_info["sector"]
-                    }
-        except requests.exceptions.HTTPError as e:
-            pass
+#                 if "sector" in stock_info and stock_info["sector"]:
+#                     sector_data[ticker] = {
+#                         "Sector": stock_info["sector"]
+#                     }
+#         except requests.exceptions.HTTPError as e:
+#             pass
         
-    market_cap_df = pd.DataFrame(market_cap_data.values(), index=market_cap_data.keys())
-    sector_df = pd.DataFrame(sector_data.values(), index=sector_data.keys())
+#     market_cap_df = pd.DataFrame(market_cap_data.values(), index=market_cap_data.keys())
+#     sector_df = pd.DataFrame(sector_data.values(), index=sector_data.keys())
     
-    # Merge the two DataFrames on the index (ticker symbol)
-    merged_df = market_cap_df.merge(sector_df, left_index=True, right_index=True)
+#     # Merge the two DataFrames on the index (ticker symbol)
+#     merged_df = market_cap_df.merge(sector_df, left_index=True, right_index=True)
     
-    return merged_df
+#     return merged_df
 
 
-new_tickerlist_nasdaq = ['AAPL','MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'AVGO', 'ASML']
+# new_tickerlist_nasdaq = ['AAPL','MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'AVGO', 'ASML']
 
-new_tickerlist_sp500 = ['AAPL', 'MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'LLY', 'V']
+# new_tickerlist_sp500 = ['AAPL', 'MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'LLY', 'V']
 
-new_tickerlist_dowjones = ['AAPL', 'MSFT', 'V', 'UNH', 'JNJ', 'JPM', 'WMT', 'PG', 'HD', 'CVX']
+# new_tickerlist_dowjones = ['AAPL', 'MSFT', 'V', 'UNH', 'JNJ', 'JPM', 'WMT', 'PG', 'HD', 'CVX']
 
-new_tickerlist_ftse100 = ['AZN', 'SHEL', 'BA', 'BP', 'RIO', 'GSK', 'JD', 'ADM', 'CRH', 'HLN']
+# new_tickerlist_ftse100 = ['AZN', 'SHEL', 'BA', 'BP', 'RIO', 'GSK', 'JD', 'ADM', 'CRH', 'HLN']
 
-new_tickerlist_bse = ['RELIANCE.BO', 'TCS.BO', 'HDFCBANK.BO', 'ICICIBANK.BO', 'HINDUNILVR.BO', 'INFY.BO', 'ITC.BO', 'SBIN.BO',
-                      'BHARTIARTL.BO', 'BAJFINANCE.BO']
+# new_tickerlist_bse = ['RELIANCE.BO', 'TCS.BO', 'HDFCBANK.BO', 'ICICIBANK.BO', 'HINDUNILVR.BO', 'INFY.BO', 'ITC.BO', 'SBIN.BO',
+#                       'BHARTIARTL.BO', 'BAJFINANCE.BO']
 
 
-if index_selection == "S&P 500":
-    ticker_list_2 = new_tickerlist_sp500
-    market_cap_df = fetch_market_cap_data(ticker_list_2)
-    top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
+# if index_selection == "S&P 500":
+#     ticker_list_2 = new_tickerlist_sp500
+#     market_cap_df = fetch_market_cap_data(ticker_list_2)
+#     top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
 
-elif index_selection == "NASDAQ 100":
-    ticker_list_2 = new_tickerlist_nasdaq
-    market_cap_df = fetch_market_cap_data(ticker_list_2)
-    top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
+# elif index_selection == "NASDAQ 100":
+#     ticker_list_2 = new_tickerlist_nasdaq
+#     market_cap_df = fetch_market_cap_data(ticker_list_2)
+#     top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
 
-elif index_selection == "DOWJONES":
-    ticker_list_2 = new_tickerlist_dowjones
-    market_cap_df = fetch_market_cap_data(ticker_list_2)
-    top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
+# elif index_selection == "DOWJONES":
+#     ticker_list_2 = new_tickerlist_dowjones
+#     market_cap_df = fetch_market_cap_data(ticker_list_2)
+#     top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
 
-elif index_selection == "FTSE 100":
-    ticker_list_2 = new_tickerlist_ftse100
-    market_cap_df = fetch_market_cap_data(ticker_list_2)
-    top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
+# elif index_selection == "FTSE 100":
+#     ticker_list_2 = new_tickerlist_ftse100
+#     market_cap_df = fetch_market_cap_data(ticker_list_2)
+#     top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
 
-elif index_selection == "BSE SENSEX":
-    ticker_list_2 = new_tickerlist_bse
-    market_cap_df = fetch_market_cap_data(ticker_list_2)
-    top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
+# elif index_selection == "BSE SENSEX":
+#     ticker_list_2 = new_tickerlist_bse
+#     market_cap_df = fetch_market_cap_data(ticker_list_2)
+#     top_10_stocks = market_cap_df.nlargest(10, "MarketCap")
     
-else:
-    ticker_list_2 = []
+# else:
+#     ticker_list_2 = []
 
-st.header(f'Top Stocks by Market Cap - {index_selection}')
-# Plot a treemap using Plotly Express
-fig = px.treemap(top_10_stocks, path= ['Ticker'], values='MarketCap',
-                 color='MarketCap', color_continuous_scale='Viridis')
+# st.header(f'Top Stocks by Market Cap - {index_selection}')
+# # Plot a treemap using Plotly Express
+# fig = px.treemap(top_10_stocks, path= ['Ticker'], values='MarketCap',
+#                  color='MarketCap', color_continuous_scale='Viridis')
 
-st.plotly_chart(fig)
+# st.plotly_chart(fig)
 
-index_data = fetch_market_cap_data(ticker_list_2)
-
-
-sector_performance = index_data.groupby('Sector')['MarketCap'].sum().reset_index()
-
-st.subheader(f'Sector-wise Performance for Top stocks - {index_selection}')
-fig = px.bar(sector_performance, x='Sector', y='MarketCap',
-             labels={'Sector': ' ', 'MarketCap': 'Total Market Cap'},
-             color='Sector'
-            )
-
-fig.update_xaxes(categoryorder='total descending')
-
-st.plotly_chart(fig)
+# index_data = fetch_market_cap_data(ticker_list_2)
 
 
-def plot_sma_vs_closing_price(stock_symbol, start, end):
-    # Retrieve stock data using yfinance
-    stock_data = yf.download(stock_symbol, start, end)
+# sector_performance = index_data.groupby('Sector')['MarketCap'].sum().reset_index()
+
+# st.subheader(f'Sector-wise Performance for Top stocks - {index_selection}')
+# fig = px.bar(sector_performance, x='Sector', y='MarketCap',
+#              labels={'Sector': ' ', 'MarketCap': 'Total Market Cap'},
+#              color='Sector'
+#             )
+
+# fig.update_xaxes(categoryorder='total descending')
+
+# st.plotly_chart(fig)
+
+
+# def plot_sma_vs_closing_price(stock_symbol, start, end):
+#     # Retrieve stock data using yfinance
+#     stock_data = yf.download(stock_symbol, start, end)
     
-    # Calculate Simple Moving Average (SMA)
-    sma_period = 20
-    stock_data['SMA'] = stock_data['Close'].rolling(window=sma_period).mean()
+#     # Calculate Simple Moving Average (SMA)
+#     sma_period = 20
+#     stock_data['SMA'] = stock_data['Close'].rolling(window=sma_period).mean()
     
-   # Create a Plotly figure
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'], mode='lines', name='Closing Price'))
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['SMA'], mode='lines', name=f'SMA {sma_period}'))
+#    # Create a Plotly figure
+#     fig = go.Figure()
+#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'], mode='lines', name='Closing Price'))
+#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['SMA'], mode='lines', name=f'SMA {sma_period}'))
     
-    # Customize the layout
-    fig.update_layout(
-        xaxis_title='Date',
-        yaxis_title= f'Price ({other_data[1]})',
-        title=f'{stock_symbol} Closing Price vs. SMA',
-        legend=dict(x=0, y=1)
-    )
+#     # Customize the layout
+#     fig.update_layout(
+#         xaxis_title='Date',
+#         yaxis_title= f'Price ({other_data[1]})',
+#         title=f'{stock_symbol} Closing Price vs. SMA',
+#         legend=dict(x=0, y=1)
+#     )
     
-    # Display the Plotly figure in Streamlit
-    st.plotly_chart(fig)
+#     # Display the Plotly figure in Streamlit
+#     st.plotly_chart(fig)
 
 
-def plot_ema_vs_closing_price(stock_symbol, start, end):
-    # Retrieve stock data using yfinance
-    stock_data = yf.download(stock_symbol, start=start, end=end)
+# def plot_ema_vs_closing_price(stock_symbol, start, end):
+#     # Retrieve stock data using yfinance
+#     stock_data = yf.download(stock_symbol, start=start, end=end)
     
-    ema_period = 20
-    # Calculate Exponential Moving Average (EMA)
-    stock_data['EMA'] = stock_data['Close'].ewm(span=ema_period).mean()
+#     ema_period = 20
+#     # Calculate Exponential Moving Average (EMA)
+#     stock_data['EMA'] = stock_data['Close'].ewm(span=ema_period).mean()
     
-    # Create a Plotly figure
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'], mode='lines', name='Closing Price'))
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['EMA'], mode='lines', name=f'EMA {ema_period}'))
+#     # Create a Plotly figure
+#     fig = go.Figure()
+#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'], mode='lines', name='Closing Price'))
+#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['EMA'], mode='lines', name=f'EMA {ema_period}'))
     
-    # Customize the layout
-    fig.update_layout(
-        xaxis_title='Date',
-        yaxis_title= f'Price ({other_data[1]})',
-        title=f'{stock_symbol} Closing Price vs. EMA',
-        legend=dict(x=0, y=1)
-    )
+#     # Customize the layout
+#     fig.update_layout(
+#         xaxis_title='Date',
+#         yaxis_title= f'Price ({other_data[1]})',
+#         title=f'{stock_symbol} Closing Price vs. EMA',
+#         legend=dict(x=0, y=1)
+#     )
     
-    # Display the Plotly figure in Streamlit
-    st.plotly_chart(fig)
+#     # Display the Plotly figure in Streamlit
+#     st.plotly_chart(fig)
 
-st.header("Trend Analysis using Indicators")
-indicator_type = st.selectbox("Select Indicator Type", ["sma", "ema"])
+# st.header("Trend Analysis using Indicators")
+# indicator_type = st.selectbox("Select Indicator Type", ["sma", "ema"])
 
-if indicator_type == "sma":
-    sma_plot = plot_sma_vs_closing_price(selected_stock, start_date, end_date)
+# if indicator_type == "sma":
+#     sma_plot = plot_sma_vs_closing_price(selected_stock, start_date, end_date)
     
-elif indicator_type == 'ema':
-    ema_plot = plot_ema_vs_closing_price(selected_stock, start_date, end_date)       
+# elif indicator_type == 'ema':
+#     ema_plot = plot_ema_vs_closing_price(selected_stock, start_date, end_date)       
 
