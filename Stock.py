@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[24]:
-
-
 import streamlit as st
 import yfinance as yf
 import plotly.graph_objects as go
@@ -14,11 +11,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-
-
-# In[25]:
-
-
 import pandas as pd
 
 # Fetch the list of S&P 500 components from Wikipedia
@@ -28,18 +20,11 @@ sp500_data = pd.read_html(url)[0]
 # Extract the ticker symbols
 sp500_tickers = sp500_data['Symbol'].tolist()
 
-
-# In[26]:
-
-
 url = "https://en.wikipedia.org/wiki/NASDAQ-100"
 nasdaq100_data = pd.read_html(url)[4]
 
 # Extract the ticker symbols
 nasdaq100_tickers = nasdaq100_data['Ticker'].tolist()
-
-
-# In[27]:
 
 
 url = "https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average"
@@ -48,18 +33,11 @@ djia_data = pd.read_html(url)[1]
 # Extract the ticker symbols
 djia_tickers = djia_data['Symbol'].tolist()
 
-
-# In[28]:
-
-
 url = "https://en.wikipedia.org/wiki/FTSE_100_Index"
 ftse100_data = pd.read_html(url)[4]
 
 # Extract the ticker symbols
 ftse100_tickers = ftse100_data['Ticker'].tolist()
-
-
-# In[29]:
 
 
 # URL of the BSE Sensex Wikipedia page
@@ -72,18 +50,12 @@ bse_sensex_data = pd.read_html(url)[1]
 # Extract the ticker symbols
 bse_sensex_tickers = bse_sensex_data['Symbol'].tolist()
 
-
-# In[30]:
-
-
 # List of available indexes
 available_indexes = ["S&P 500", "NASDAQ 100", "DOWJONES", "FTSE 100", "BSE SENSEX"]
 
 # Sidebar: Index Selection
 index_selection = st.sidebar.selectbox("Select an Index", available_indexes)
 
-
-# In[31]:
 
 
 index_mapping = {
@@ -95,13 +67,7 @@ index_mapping = {
 }
 
 
-# In[32]:
-
-
 index_symbol = index_mapping.get(index_selection)
-
-
-# In[33]:
 
 
 @st.cache_data
@@ -134,29 +100,16 @@ def get_stock_list(index_name):
     return stock_list
 
 
-# In[34]:
-
-
 ticker_list = get_stock_list(index_selection)
 
 
-# In[35]:
-
-
 st.markdown("<h1 style='text-align: center;'>Stock Market Analysis Dashboard</h1>", unsafe_allow_html=True)
-
-
-# In[81]:
 
 
 def get_stock_data(stock_symbol, start_date, end_date):
     
     stock_data = yf.download(stock_symbol, start=start_date, end=end_date)
     return stock_data
-
-
-# In[76]:
-
 
 # Function to get historical stock data
 
@@ -186,9 +139,6 @@ def get_index_data(index_symbol, timeframe):
     return index_data
 
 
-# In[80]:
-
-
 @st.cache_data
 def get_currency(stock_symbol):
     stock_data_other = yf.Ticker(stock_symbol)
@@ -196,14 +146,8 @@ def get_currency(stock_symbol):
     currency = stock_data_other.info['currency']
     return info,currency
 
-
-# In[39]:
-
-
 datetime.today()
 
-
-# In[65]:
 
 
 st.sidebar.title("Select Parameters")
@@ -238,9 +182,6 @@ else:
     st.plotly_chart(fig)
 
 
-# In[41]:
-
-
 st.subheader(f"{other_data[0]} Stock Summary")
 if not stock_data.empty:
     # Calculate 1-Year Change
@@ -273,13 +214,7 @@ else:
     st.write("Stock data is not available. Please select a valid stock.")
 
 
-# In[42]:
-
-
 pricing_data, fundamental_data, news  = st.tabs(["Pricing Data", "Fundamental Data", "Top News"])
-
-
-# In[43]:
 
 
 with pricing_data:
@@ -329,8 +264,6 @@ with pricing_data:
     st.plotly_chart(fig)
 
 
-# In[44]:
-
 
 @st.cache_data
 def print_stock_news(stock_symbol):
@@ -350,15 +283,8 @@ def print_stock_news(stock_symbol):
     return top_news
 
 
-# In[45]:
-
-
 if selected_stock:
     top_5_news = print_stock_news(selected_stock)
-
-
-# In[46]:
-
 
 with news:
     st.subheader(f'Top News for {selected_stock}')
@@ -367,11 +293,6 @@ with news:
         st.write("Title:", news_item['title'])
         st.write("Link:", news_item['link'])
         
-                     
-
-
-# In[47]:
-
 
 @st.cache_data
 def get_fundamental_metrics(stock_symbol):
@@ -390,10 +311,6 @@ def get_fundamental_metrics(stock_symbol):
 
     return fundamental_metrics
 
-
-# In[48]:
-
-
 with fundamental_data:
     st.subheader(f"Fundamental Data for {selected_stock}")
 
@@ -401,9 +318,6 @@ with fundamental_data:
 
     for metric, value in fundamental_metrics.items():
         st.write(f"{metric}: {value}")
-
-
-# In[49]:
 
 
 st.header("Stock Price Comparison")
@@ -444,9 +358,6 @@ else:
     st.plotly_chart(fig)    
 
 
-# In[50]:
-
-
 st.header(f"{index_selection} Index Performance")
 
 index_timeframe = ['5 Day', '1 Week', '1 Month', '6 Months', 'YTD', '1 Year', '5 Year']
@@ -473,9 +384,6 @@ else:
 
     # Display the chart in the Streamlit app
     st.plotly_chart(fig)
-
-
-# In[51]:
 
 
 def fetch_market_cap_data(index_tickers):
@@ -506,39 +414,23 @@ def fetch_market_cap_data(index_tickers):
     
     return merged_df
 
-
-# In[52]:
-
-
 new_tickerlist_nasdaq = ['AAPL','MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'AVGO', 'ASML']
 
-
-# In[53]:
 
 
 new_tickerlist_sp500 = ['AAPL', 'MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'LLY', 'V']
 
 
-# In[54]:
-
-
 new_tickerlist_dowjones = ['AAPL', 'MSFT', 'V', 'UNH', 'JNJ', 'JPM', 'WMT', 'PG', 'HD', 'CVX']
 
-
-# In[55]:
 
 
 new_tickerlist_ftse100 = ['AZN', 'SHEL', 'BA', 'BP', 'RIO', 'GSK', 'JD', 'ADM', 'CRH', 'HLN']
 
 
-# In[56]:
-
 
 new_tickerlist_bse = ['RELIANCE.BO', 'TCS.BO', 'HDFCBANK.BO', 'ICICIBANK.BO', 'HINDUNILVR.BO', 'INFY.BO', 'ITC.BO', 'SBIN.BO',
                       'BHARTIARTL.BO', 'BAJFINANCE.BO']
-
-
-# In[57]:
 
 
 
@@ -571,25 +463,13 @@ else:
     ticker_list_2 = []
 
 
-# In[58]:
-
-
 st.header(f'Top Stocks by Market Cap - {index_selection}')
 # Plot a treemap using Plotly Express
 fig = px.treemap(top_10_stocks, path=['LongName'], values='MarketCap',
                  color='MarketCap')
 st.plotly_chart(fig)
 
-
-# In[59]:
-
-
 index_data = fetch_market_cap_data(ticker_list_2)
-
-
-# In[60]:
-
-
 
 sector_performance = index_data.groupby('Sector')['MarketCap'].sum().reset_index()
 
@@ -601,9 +481,6 @@ fig = px.bar(sector_performance, x='Sector', y='MarketCap',
 fig.update_xaxes(categoryorder='total descending')
 
 st.plotly_chart(fig)
-
-
-# In[61]:
 
 
 def plot_sma_vs_closing_price(stock_symbol, start, end):
@@ -631,9 +508,6 @@ def plot_sma_vs_closing_price(stock_symbol, start, end):
     st.plotly_chart(fig)
 
 
-# In[62]:
-
-
 def plot_ema_vs_closing_price(stock_symbol, start, end):
     # Retrieve stock data using yfinance
     stock_data = yf.download(stock_symbol, start=start, end=end)
@@ -659,15 +533,8 @@ def plot_ema_vs_closing_price(stock_symbol, start, end):
     st.plotly_chart(fig)
 
 
-# In[63]:
-
-
 st.header("Trend Analysis using Indicators")
 indicator_type = st.selectbox("Select Indicator Type", ["sma", "ema"])
-                                               
-
-
-# In[64]:
 
 
 if indicator_type == "sma":
@@ -675,10 +542,6 @@ if indicator_type == "sma":
     
 elif indicator_type == 'ema':
     ema_plot = plot_ema_vs_closing_price(selected_stock, start_date, end_date)       
-
-
-# In[ ]:
-
 
 
 
