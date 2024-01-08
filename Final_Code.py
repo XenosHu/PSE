@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
-from fastquant import get_pse_data
+from psequant import get_pse_data
 
 # Fetch the list of S&P 500 components from Wikipedia
 url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
