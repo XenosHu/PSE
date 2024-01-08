@@ -42,17 +42,21 @@ ftse100_tickers = ftse100_data['Ticker'].tolist()
 url5 = "https://en.wikipedia.org/wiki/BSE_Sensex"
 bse_sensex_data = pd.read_html(url5)[1]
 
-
 # Extract the ticker symbols
 bse_sensex_tickers = bse_sensex_data['Symbol'].tolist()
 
+#-------------------------------------------------------------------------------------------------------------------------------
+
+raw = pd.read_csv("pse_info.csv")
+pse_tickers = raw['symbol'].tolist()
+
+#-------------------------------------------------------------------------------------------------------------------------------
 
 # List of available indexes
-available_indexes = ["S&P 500", "NASDAQ 100", "DOWJONES", "FTSE 100", "BSE SENSEX"]
+available_indexes = ["S&P 500", "NASDAQ 100", "DOWJONES", "FTSE 100", "BSE SENSEX", "Philippines Stock Exchange"]
 
 # Sidebar: Index Selection
 index_selection = st.sidebar.selectbox("Select an Index", available_indexes)
-
 
 index_mapping = {
     "S&P 500": "^GSPC",
@@ -60,6 +64,7 @@ index_mapping = {
     "DOWJONES": "^DJI",
     "FTSE 100": "^FTSE",
     "BSE SENSEX": "^BSESN"
+    "Philippines Stock Exchange"
 }
 
 
@@ -88,7 +93,10 @@ def get_stock_list(index_name):
     elif index_name == "BSE SENSEX":
         
         stock_list = bse_sensex_tickers
-    
+        
+    elif index_name == "Philippines Stock Exchange":
+        
+        stock_list = pse_tickers
     
     else:
         stock_list = []
