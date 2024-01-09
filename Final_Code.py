@@ -44,13 +44,6 @@ ticker_list = get_stock_list(index_selection)
 
 st.markdown("<h1 style='text-align: center;'>Stock Market Analysis Dashboard</h1>", unsafe_allow_html=True)
 
-
-@st.cache_data
-def get_stock_data(stock_symbol, start_date, end_date):
-    
-    stock_data = yf.download(stock_symbol, start=start_date, end=end_date)
-    return stock_data
-
 @st.cache_data
 def get_stock_data_pse(keyword,start_date,end_date):
     headers = {
@@ -77,6 +70,7 @@ def get_stock_data_pse(keyword,start_date,end_date):
     start_date = pd.to_datetime(start_date, utc=True)
     end_date = pd.to_datetime(end_date, utc=True)
 
+    df['D'] = pd.to_datetime(df['D'])
     # Filter the DataFrame based on the date constraints
     filtered_df = df[(df['D'] >= start_date) & (df['D'] <= end_date)]
     # Display the filtered data
@@ -140,7 +134,7 @@ with st.expander(f"**({selected_stock}) Stock Price**"):
 if stock_data.empty:
     st.write("Data not available for this stock symbol in the specified date range.")
 else:
-    fig = go.Figure(data=go.Candlestick(x=stock_data.index,
+    fig = go.Figure(data=go.Candlestick(x=stock_data['D'],
                                        open=stock_data['O'],
                                        high=stock_data['H'],
                                        low=stock_data['L'],
@@ -452,9 +446,8 @@ else:
 
 # st.plotly_chart(fig)
 
-
 def plot_sma_vs_closing_price(stock_symbol, start_date, end_date):
-    # Retrieve stock data using yfinance
+
     stock_data = get_stock_data_pse(stock_symbol, start_date, end_date)
     
     # Calculate Simple Moving Average (SMA)
@@ -463,8 +456,8 @@ def plot_sma_vs_closing_price(stock_symbol, start_date, end_date):
     
    # Create a Plotly figure
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['C'], mode='lines', name='Closing Price'))
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['SMA'], mode='lines', name=f'SMA {sma_period}'))
+    fig.add_trace(go.Scatter(x=stock_data['D'], y=stock_data['C'], mode='lines', name='Closing Price'))
+    fig.add_trace(go.Scatter(x=stock_data['D'], y=stock_data['SMA'], mode='lines', name=f'SMA {sma_period}'))
     
     # Customize the layout
     fig.update_layout(
@@ -478,7 +471,7 @@ def plot_sma_vs_closing_price(stock_symbol, start_date, end_date):
     st.plotly_chart(fig)
 
 def plot_ema_vs_closing_price(stock_symbol, start_date, end_date):
-    # Retrieve stock data using yfinance
+
     stock_data = get_stock_data_pse(stock_symbol, start_date, end_date)
     
     ema_period = 20
@@ -492,8 +485,8 @@ def plot_ema_vs_closing_price(stock_symbol, start_date, end_date):
     
     # Create a Plotly figure
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['C'], mode='lines', name='Closing Price'))
-    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['EMA'], mode='lines', name=f'EMA {ema_period}'))
+    fig.add_trace(go.Scatter(x=stock_data['D'], y=stock_data['C'], mode='lines', name='Closing Price'))
+    fig.add_trace(go.Scatter(x=stock_data['D'], y=stock_data['EMA'], mode='lines', name=f'EMA {ema_period}'))
     
     # Customize the layout
     fig.update_layout(
