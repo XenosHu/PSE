@@ -12,7 +12,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-
+import json
 #-------------------------------------------------------------------------------------------------------------------------------
 
 raw = pd.read_csv("PSE_info.csv")
