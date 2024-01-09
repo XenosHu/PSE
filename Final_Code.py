@@ -13,40 +13,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
-from psequant import get_pse_data
-
-# Fetch the list of S&P 500 components from Wikipedia
-url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-sp500_data = pd.read_html(url)[0]
-
-# Extract the ticker symbols
-sp500_tickers = sp500_data['Symbol'].tolist()
-
-url2 = "https://en.wikipedia.org/wiki/NASDAQ-100"
-nasdaq100_data = pd.read_html(url2)[4]
-
-# Extract the ticker symbols
-nasdaq100_tickers = nasdaq100_data['Ticker'].tolist()
-
-url3 = "https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average"
-djia_data = pd.read_html(url3)[1]
-
-# Extract the ticker symbols
-djia_tickers = djia_data['Symbol'].tolist()
-
-url4 = "https://en.wikipedia.org/wiki/FTSE_100_Index"
-ftse100_data = pd.read_html(url4)[4]
-
-# Extract the ticker symbols
-ftse100_tickers = ftse100_data['Ticker'].tolist()
-
-# URL of the BSE Sensex Wikipedia page
-url5 = "https://en.wikipedia.org/wiki/BSE_Sensex"
-bse_sensex_data = pd.read_html(url5)[1]
-
-# Extract the ticker symbols
-bse_sensex_tickers = bse_sensex_data['Symbol'].tolist()
-
 #-------------------------------------------------------------------------------------------------------------------------------
 
 raw = pd.read_csv("PSE_info.csv")
@@ -55,17 +21,12 @@ pse_tickers = raw['symbol'].tolist()
 #-------------------------------------------------------------------------------------------------------------------------------
 
 # List of available indexes
-available_indexes = ["S&P 500", "NASDAQ 100", "DOWJONES", "FTSE 100", "BSE SENSEX", "Philippines Stock Exchange"]
+available_indexes = ["Philippines Stock Exchange"]
 
 # Sidebar: Index Selection
 index_selection = st.sidebar.selectbox("Select an Index", available_indexes)
 
 index_mapping = {
-    "S&P 500": "^GSPC",
-    "NASDAQ 100": "^NDX",
-    "DOWJONES": "^DJI",
-    "FTSE 100": "^FTSE",
-    "BSE SENSEX": "^BSESN"
     "Philippines Stock Exchange"
 }
 
@@ -76,36 +37,11 @@ index_symbol = index_mapping.get(index_selection)
 @st.cache_data
 def get_stock_list(index_name):
     
-    if index_name == "S&P 500":
-        
-        stock_list = sp500_data
-    
-    elif index_name == "NASDAQ 100":
-        
-        stock_list = nasdaq100_tickers
-        
-    elif index_name == "DOWJONES":
-        
-        stock_list = djia_tickers
-        
-    elif index_name == "FTSE 100":
-        
-        stock_list = ftse100_tickers
-    
-    elif index_name == "BSE SENSEX":
-        
-        stock_list = bse_sensex_tickers
-        
-    elif index_name == "Philippines Stock Exchange":
-        
+    if index_name == "Philippines Stock Exchange":
         stock_list = pse_tickers
-    
     else:
         stock_list = []
-    
     return stock_list
-
-
 
 ticker_list = get_stock_list(index_selection)
 
@@ -120,38 +56,62 @@ def get_stock_data(stock_symbol, start_date, end_date):
     return stock_data
 
 @st.cache_data
-def get_stock_data_pse(stock_symbol, start_date, end_date):
+def get_stock_data_pse(keyword,start_date,end_date):
+    headers = {
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    'Content-Type': 'application/json',  # This is typically set automatically when using json parameter
+    'Origin':'https://www.investagrams.com',
+    'Referer':'https://www.investagrams.com/'
+    }
+    url_search = "https://webapi.investagrams.com/InvestaApi/Stock/SearchStockSnippet?keyword=wlcon&userDefaultExchangeType=4&selectedExchangeType=0&limit=0&cv=1704729600-0-v3"
+    params_search = {'keyword': keyword, 'userDefaultExchangeType': '4', 'selectedExchangeType': '0', 'limit': '0', 'cv': '1704729600-0-v3'}
+    response_search = requests.get(url=url_search,headers=headers,params=params_search)
+    stock_id = json.loads(response_search.text)[0]['StockId']
     
-    stock_data = get_pse_data(stock_symbol, start=start_date, end=end_date)
-    return stock_data
+    url_getstock = "https://webapi.investagrams.com/InvestaApi/Stock/GetStockHistoricalTableByStockIdAndDate"
+    params_getstock = {
+    'stockId': stock_id,
+    'timeRange': '24M',
+    'irt': 'a'}
+    response_getstock = requests.get(url=url_getstock,headers=headers,params=params_getstock)
+    df = pd.DataFrame(json.loads(response_getstock.text))
+    df['D'] = pd.to_datetime(df['D'], utc=True)
+
+    # Convert the constraints to datetime in UTC
+    start_date = pd.to_datetime(start_date, utc=True)
+    end_date = pd.to_datetime(end_date, utc=True)
+
+    # Filter the DataFrame based on the date constraints
+    filtered_df = df[(df['D'] >= start_date) & (df['D'] <= end_date)]
+    # Display the filtered data
+    return filtered_df
 
 
-
-@st.cache_data
-def get_index_data(index_symbol, timeframe):
+# @st.cache_data
+# def get_index_data(index_symbol, timeframe):
     
-    # Define end date as today
-    end_date = datetime.now()
+#     # Define end date as today
+#     end_date = datetime.now()
         
-    # Calculate start date based on the selected timeframe
-    if timeframe == '5 Day':
-        start_date = end_date - timedelta(days=5)
-    elif timeframe == '1 Week':
-        start_date = end_date - timedelta(weeks=1)
-    elif timeframe == '1 Month':
-        start_date = end_date - timedelta(weeks=4)
-    elif timeframe == '6 Months':
-        start_date = end_date - timedelta(weeks=26)
-    elif timeframe == 'YTD':
-        start_date = datetime(end_date.year, 1, 1)
-    elif timeframe == '1 Year':
-        start_date = end_date - timedelta(weeks=52)
-    elif timeframe == '5 Year':
-        start_date = end_date - timedelta(weeks=260)
+#     # Calculate start date based on the selected timeframe
+#     if timeframe == '5 Day':
+#         start_date = end_date - timedelta(days=5)
+#     elif timeframe == '1 Week':
+#         start_date = end_date - timedelta(weeks=1)
+#     elif timeframe == '1 Month':
+#         start_date = end_date - timedelta(weeks=4)
+#     elif timeframe == '6 Months':
+#         start_date = end_date - timedelta(weeks=26)
+#     elif timeframe == 'YTD':
+#         start_date = datetime(end_date.year, 1, 1)
+#     elif timeframe == '1 Year':
+#         start_date = end_date - timedelta(weeks=52)
+#     elif timeframe == '5 Year':
+#         start_date = end_date - timedelta(weeks=260)
     
-    index_data = yf.Ticker(index_symbol).history(start=start_date, end=end_date)
+#     index_data = yf.Ticker(index_symbol).history(start=start_date, end=end_date)
 
-    return index_data
+#     return index_data
 
 
 @st.cache_data
@@ -172,121 +132,121 @@ default_start_date = datetime.today() - timedelta(weeks=52)
 start_date = st.sidebar.date_input("Start Date", default_start_date)
 end_date = st.sidebar.date_input("End Date")
 
-
-
 if start_date >= end_date:
     st.error("Error: Start date must be before end date.")
     
 # Fetch data and display price chart
 if index_name == "Philippines Stock Exchange":
     stock_data = get_stock_data_pse(selected_stock, start_date, end_date)
-else:
-    stock_data = get_stock_data(selected_stock, start_date, end_date)
-other_data = get_currency(selected_stock)
+
+st.write(stock_data)
+#other_data = get_currency(selected_stock)
+
+#-------------------------------------------------------------------------------------------------------------------------------
 
 
-st.header(f"{other_data[0]} ({selected_stock}) Stock Price")
+# #st.header(f"{other_data[0]} ({selected_stock}) Stock Price")
+# st.header(f" ({selected_stock}) Stock Price")
 
-if stock_data.empty:
-    st.write("Data not available for this stock symbol in the specified date range.")
-else:
-    fig = go.Figure(data=go.Candlestick(x=stock_data.index,
-                                       open=stock_data['Open'],
-                                       high=stock_data['High'],
-                                       low=stock_data['Low'],
-                                       close=stock_data['Close']))
+# if stock_data.empty:
+#     st.write("Data not available for this stock symbol in the specified date range.")
+# else:
+#     fig = go.Figure(data=go.Candlestick(x=stock_data.index,
+#                                        open=stock_data['Open'],
+#                                        high=stock_data['High'],
+#                                        low=stock_data['Low'],
+#                                        close=stock_data['Close']))
 
-    fig.update_layout(yaxis_title=f'Price ({other_data[1]})',
-                      xaxis_title='Date')
+#     fig.update_layout(yaxis_title=f'Price ({other_data[1]})',
+#                       xaxis_title='Date')
 
-    st.plotly_chart(fig)
+#     st.plotly_chart(fig)
 
-st.subheader(f"{other_data[0]} Stock Summary")
-if not stock_data.empty:
-    # Calculate 1-Year Change
-    one_year_change = ((stock_data["Adj Close"][-1] / stock_data["Adj Close"][0]) - 1) * 100
+# st.subheader(f"{other_data[0]} Stock Summary")
+# if not stock_data.empty:
+#     # Calculate 1-Year Change
+#     one_year_change = ((stock_data["Adj Close"][-1] / stock_data["Adj Close"][0]) - 1) * 100
     
-    average_vol_3m = stock_data["Volume"].tail(63).mean()
+#     average_vol_3m = stock_data["Volume"].tail(63).mean()
 
-    prev_close = stock_data["Close"][-2]
-    open_price = stock_data["Open"][-1]
-    volume = stock_data["Volume"][-1]
-    day_range = f"{stock_data['Low'][-1]:,.2f}-{stock_data['High'][-1]:,.2f}"
-    fifty_two_week_range = f"{stock_data['Low'].min():,.2f}-{stock_data['High'].max():,.2f}"
+#     prev_close = stock_data["Close"][-2]
+#     open_price = stock_data["Open"][-1]
+#     volume = stock_data["Volume"][-1]
+#     day_range = f"{stock_data['Low'][-1]:,.2f}-{stock_data['High'][-1]:,.2f}"
+#     fifty_two_week_range = f"{stock_data['Low'].min():,.2f}-{stock_data['High'].max():,.2f}"
     
-    stock_summary_data = {
-        "Prev. Close": [f"{prev_close:,.2f}"],
-        "Open": [f"{open_price:,.2f}"],
-        "1-Year Change": [f"{one_year_change:.2f}%"],
-        "Volume": [f"{volume:,.0f}"],
-        "Average Vol. (3m)": [f"{average_vol_3m:,.0f}"],
-        "Day's Range": [day_range],
-        "52 wk Range": [fifty_two_week_range]
-    }
+#     stock_summary_data = {
+#         "Prev. Close": [f"{prev_close:,.2f}"],
+#         "Open": [f"{open_price:,.2f}"],
+#         "1-Year Change": [f"{one_year_change:.2f}%"],
+#         "Volume": [f"{volume:,.0f}"],
+#         "Average Vol. (3m)": [f"{average_vol_3m:,.0f}"],
+#         "Day's Range": [day_range],
+#         "52 wk Range": [fifty_two_week_range]
+#     }
 
-    # Convert the dictionary to a DataFrame
-    df_stock_summary = pd.DataFrame.from_dict(stock_summary_data)
+#     # Convert the dictionary to a DataFrame
+#     df_stock_summary = pd.DataFrame.from_dict(stock_summary_data)
 
-    # Display the summary information in a table
-    st.table(df_stock_summary)
-else:
-    st.write("Stock data is not available. Please select a valid stock.")
+#     # Display the summary information in a table
+#     st.table(df_stock_summary)
+# else:
+#     st.write("Stock data is not available. Please select a valid stock.")
 
-
-pricing_data, fundamental_data, news  = st.tabs(["Pricing Data", "Fundamental Data", "Top News"])
-
+# pricing_data, fundamental_data, news  = st.tabs(["Pricing Data", "Fundamental Data", "Top News"])
 
 
-with pricing_data:
-    st.subheader(f'Price Movements for {selected_stock}')
-    updated_data = stock_data
-    updated_data["% Change"] = stock_data["Adj Close"] / stock_data["Adj Close"].shift(1) - 1
-    st.write(updated_data)
+# with pricing_data:
+#     st.subheader(f'Price Movements for {selected_stock}')
+#     updated_data = stock_data
+#     updated_data["% Change"] = stock_data["Adj Close"] / stock_data["Adj Close"].shift(1) - 1
+#     st.write(updated_data)
     
-    annual_return = updated_data["% Change"].mean()*252*100
-    annual_return_color = "green" if annual_return >= 0 else "red"
-    st.markdown(f"Annual Return: <span style='color:{annual_return_color}'>{round(annual_return, 2)}%</span>", unsafe_allow_html=True)
+#     annual_return = updated_data["% Change"].mean()*252*100
+#     annual_return_color = "green" if annual_return >= 0 else "red"
+#     st.markdown(f"Annual Return: <span style='color:{annual_return_color}'>{round(annual_return, 2)}%</span>", unsafe_allow_html=True)
     
-    stdev = np.std(updated_data["% Change"]) * np.sqrt(252)
-    stdev_color = "green" if stdev >= 0 else "red"
-    st.markdown(f"Standard Deviation is: <span style='color:{stdev_color}'>{round(stdev * 100, 2)}%</span>", unsafe_allow_html=True)
+#     stdev = np.std(updated_data["% Change"]) * np.sqrt(252)
+#     stdev_color = "green" if stdev >= 0 else "red"
+#     st.markdown(f"Standard Deviation is: <span style='color:{stdev_color}'>{round(stdev * 100, 2)}%</span>", unsafe_allow_html=True)
     
-    fig = go.Figure()
+#     fig = go.Figure()
     
-    st.subheader(f"{other_data[0]} % Price Change")
+#     st.subheader(f"{other_data[0]} % Price Change")
 
-    # Create a condition to determine the color of bars (green for positive and red for negative)
-    positive_mask = updated_data['% Change'] >= 0
-    negative_mask = updated_data['% Change'] < 0
+#     # Create a condition to determine the color of bars (green for positive and red for negative)
+#     positive_mask = updated_data['% Change'] >= 0
+#     negative_mask = updated_data['% Change'] < 0
 
-    # Add bars for positive values
-    fig.add_trace(go.Bar(
-        x=updated_data.index[positive_mask],
-        y=updated_data['% Change'][positive_mask],
-        name=f"{selected_stock} % Change (Positive)",
-        marker_color='rgb(34, 139, 34)'
-    ))
+#     # Add bars for positive values
+#     fig.add_trace(go.Bar(
+#         x=updated_data.index[positive_mask],
+#         y=updated_data['% Change'][positive_mask],
+#         name=f"{selected_stock} % Change (Positive)",
+#         marker_color='rgb(34, 139, 34)'
+#     ))
 
-    # Add bars for negative values (inverted)
-    fig.add_trace(go.Bar(
-        x=updated_data.index[negative_mask],
-        y=updated_data['% Change'][negative_mask],
-        name=f"{selected_stock} % Change (Negative)",
-        marker_color='rgb(220, 20, 60)'
-    ))
+#     # Add bars for negative values (inverted)
+#     fig.add_trace(go.Bar(
+#         x=updated_data.index[negative_mask],
+#         y=updated_data['% Change'][negative_mask],
+#         name=f"{selected_stock} % Change (Negative)",
+#         marker_color='rgb(220, 20, 60)'
+#     ))
 
-    # Customize the chart layout
-    fig.update_layout(xaxis_title='Date',
-                      yaxis_title='% Price Change',
-                      barmode='relative',
-                      legend=dict(x=0, y=1.2))
+#     # Customize the chart layout
+#     fig.update_layout(xaxis_title='Date',
+#                       yaxis_title='% Price Change',
+#                       barmode='relative',
+#                       legend=dict(x=0, y=1.2))
 
-    # Display the chart in the Streamlit app
-    st.plotly_chart(fig)
+#     # Display the chart in the Streamlit app
+#     st.plotly_chart(fig)
 
 
-analyzer = SentimentIntensityAnalyzer()
+# analyzer = SentimentIntensityAnalyzer()
 
+#-------------------------------------------------------------------------------------------------------------------------------
 
 # @st.cache_data
 # def print_stock_news(stock_symbol):
