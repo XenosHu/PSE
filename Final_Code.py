@@ -175,6 +175,14 @@ if not stock_data.empty:
 else:
     st.write("Stock data is not available. Please select a valid stock.")
 
+
+# def get_news(selected_stock):
+#     news_url = 'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q=' + selected_stock
+    
+
+st.subheader(f"{selected_stock} Top News")
+
+
 # pricing_data, fundamental_data, news  = st.tabs(["Pricing Data", "Fundamental Data", "Top News"])
 
 # with pricing_data:
@@ -230,26 +238,26 @@ else:
 #-------------------------------------------------------------------------------------------------------------------------------
 
 # @st.cache_data
-# def print_stock_news(stock_symbol):
-#     stock = yf.Ticker(stock_symbol)
-#     news = stock.news
-#     top_news = []
-#     for item in news[:5]:
-#         title = item['title']
-#         link = item['link']
-#         publish_date = item['providerPublishTime']
+def print_stock_news(stock_symbol):
+    stock = yf.Ticker(stock_symbol)
+    news = stock.news
+    top_news = []
+    for item in news[:5]:
+        title = item['title']
+        link = item['link']
+        publish_date = item['providerPublishTime']
         
-#         # Analyze sentiment of the news title
-#         sentiment = analyzer.polarity_scores(title)
+        # Analyze sentiment of the news title
+        sentiment = analyzer.polarity_scores(title)
         
-#         news_info = {
-#             "title": title,
-#             "link": link,
-#             "published_date": publish_date,
-#             "sentiment": sentiment['compound']  # Compound sentiment score
-#         }
-#         top_news.append(news_info)
-#     return top_news
+        news_info = {
+            "title": title,
+            "link": link,
+            "published_date": publish_date,
+            "sentiment": sentiment['compound']  # Compound sentiment score
+        }
+        top_news.append(news_info)
+    return top_news
 
 # if selected_stock:
 #     top_5_news = print_stock_news(selected_stock)
