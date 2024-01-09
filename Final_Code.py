@@ -134,7 +134,7 @@ if index_selection == "Philippines Stock Exchange":
 #other_data = get_currency(selected_stock)
 
 #-------------------------------------------------------------------------------------------------------------------------------
-with st.expander(f"** ({selected_stock}) Stock Price**"):
+with st.expander(f"**({selected_stock}) Stock Price**"):
     st.write(stock_data)
 
 if stock_data.empty:
@@ -477,12 +477,16 @@ def plot_sma_vs_closing_price(stock_symbol, start, end):
     # Display the Plotly figure in Streamlit
     st.plotly_chart(fig)
 
-
 def plot_ema_vs_closing_price(stock_symbol, start, end):
     # Retrieve stock data using yfinance
     stock_data = get_stock_data_pse(stock_symbol, start=start, end=end)
     
     ema_period = 20
+    
+    if stock_data.empty or 'C' not in stock_data.columns:
+        st.write("No data available or missing 'C' column.")
+        return
+            
     # Calculate Exponential Moving Average (EMA)
     stock_data['EMA'] = stock_data['C'].ewm(span=ema_period).mean()
     
