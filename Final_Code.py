@@ -13,12 +13,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import json
-#-------------------------------------------------------------------------------------------------------------------------------
+
 
 raw = pd.read_csv("PSE_info.csv")
 pse_tickers = raw['symbol'].tolist()
-
-#-------------------------------------------------------------------------------------------------------------------------------
 
 available_indexes = ["Philippines Stock Exchange"]
 
@@ -70,7 +68,7 @@ def get_stock_data_pse(keyword,start_date,end_date):
     url_getstock = "https://webapi.investagrams.com/InvestaApi/Stock/GetStockHistoricalTableByStockIdAndDate"
     params_getstock = {
     'stockId': stock_id,
-    'timeRange': '24M',
+    'timeRange': '36M',
     'irt': 'a'}
     response_getstock = requests.get(url=url_getstock,headers=headers,params=params_getstock)
     df = pd.DataFrame(json.loads(response_getstock.text))
@@ -113,15 +111,15 @@ def get_stock_data_pse(keyword,start_date,end_date):
 #     return index_data
 
 
-@st.cache_data
-def get_currency(stock_symbol):
-    stock_data_other = yf.Ticker(stock_symbol)
-    info = stock_data_other.info['longName']
-    currency = stock_data_other.info['currency']
-    return info,currency
+# @st.cache_data
+# def get_currency(stock_symbol):
+#     stock_data_other = yf.Ticker(stock_symbol)
+#     info = stock_data_other.info['longName']
+#     currency = stock_data_other.info['currency']
+#     return info,currency
 
 
-datetime.today()
+# datetime.today()
 
 
 st.sidebar.title("Select Parameters")
@@ -137,52 +135,48 @@ if start_date >= end_date:
 # Fetch data and display price chart
 if index_selection == "Philippines Stock Exchange":
     stock_data = get_stock_data_pse(selected_stock, start_date, end_date)
-
-st.write(stock_data)
 #other_data = get_currency(selected_stock)
 
 #-------------------------------------------------------------------------------------------------------------------------------
+with st.expander(f" ({selected_stock}) Stock Price"):
+    st.write(stock_data)
 
+if stock_data.empty:
+    st.write("Data not available for this stock symbol in the specified date range.")
+else:
+    fig = go.Figure(data=go.Candlestick(x=stock_data.index,
+                                       open=stock_data['O'],
+                                       high=stock_data['H'],
+                                       low=stock_data['L'],
+                                       close=stock_data['C']))
 
-# #st.header(f"{other_data[0]} ({selected_stock}) Stock Price")
-# st.header(f" ({selected_stock}) Stock Price")
+    fig.update_layout(yaxis_title=f'Price ₱',
+                      xaxis_title='Date')
 
-# if stock_data.empty:
-#     st.write("Data not available for this stock symbol in the specified date range.")
-# else:
-#     fig = go.Figure(data=go.Candlestick(x=stock_data.index,
-#                                        open=stock_data['Open'],
-#                                        high=stock_data['High'],
-#                                        low=stock_data['Low'],
-#                                        close=stock_data['Close']))
+    st.plotly_chart(fig)
 
-#     fig.update_layout(yaxis_title=f'Price ({other_data[1]})',
-#                       xaxis_title='Date')
-
-#     st.plotly_chart(fig)
-
-# st.subheader(f"{other_data[0]} Stock Summary")
-# if not stock_data.empty:
-#     # Calculate 1-Year Change
-#     one_year_change = ((stock_data["Adj Close"][-1] / stock_data["Adj Close"][0]) - 1) * 100
+st.subheader(f"{selected_stock} Stock Summary")
+if not stock_data.empty:
+    # Calculate 1-Year Change
+    one_year_change = ((stock_data["C"][-1] / stock_data["C"][0]) - 1) * 100
     
-#     average_vol_3m = stock_data["Volume"].tail(63).mean()
+    average_vol_3m = stock_data["V"].tail(63).mean()
 
-#     prev_close = stock_data["Close"][-2]
-#     open_price = stock_data["Open"][-1]
-#     volume = stock_data["Volume"][-1]
-#     day_range = f"{stock_data['Low'][-1]:,.2f}-{stock_data['High'][-1]:,.2f}"
-#     fifty_two_week_range = f"{stock_data['Low'].min():,.2f}-{stock_data['High'].max():,.2f}"
+    prev_close = stock_data["C"][-2]
+    open_price = stock_data["O"][-1]
+    volume = stock_data["V"][-1]
+    day_range = f"{stock_data['L'][-1]:,.2f}-{stock_data['H'][-1]:,.2f}"
+    fifty_two_week_range = f"{stock_data['L'].min():,.2f}-{stock_data['H'].max():,.2f}"
     
-#     stock_summary_data = {
-#         "Prev. Close": [f"{prev_close:,.2f}"],
-#         "Open": [f"{open_price:,.2f}"],
-#         "1-Year Change": [f"{one_year_change:.2f}%"],
-#         "Volume": [f"{volume:,.0f}"],
-#         "Average Vol. (3m)": [f"{average_vol_3m:,.0f}"],
-#         "Day's Range": [day_range],
-#         "52 wk Range": [fifty_two_week_range]
-#     }
+    stock_summary_data = {
+        "Prev. Close": [f"{prev_close:,.2f}"],
+        "Open": [f"{open_price:,.2f}"],
+        "1-Year Change": [f"{one_year_change:.2f}%"],
+        "Volume": [f"{volume:,.0f}"],
+        "Average Vol. (3m)": [f"{average_vol_3m:,.0f}"],
+        "Day's Range": [day_range],
+        "52 wk Range": [fifty_two_week_range]
+    }
 
 #     # Convert the dictionary to a DataFrame
 #     df_stock_summary = pd.DataFrame.from_dict(stock_summary_data)
