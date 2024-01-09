@@ -135,7 +135,7 @@ if start_date >= end_date:
     st.error("Error: Start date must be before end date.")
     
 # Fetch data and display price chart
-if index_name == "Philippines Stock Exchange":
+if index_selection == "Philippines Stock Exchange":
     stock_data = get_stock_data_pse(selected_stock, start_date, end_date)
 
 st.write(stock_data)
