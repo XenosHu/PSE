@@ -34,9 +34,9 @@ index_symbol = index_mapping.get(index_selection)
 
 
 @st.cache_data
-def get_stock_list(index_name):
+def get_stock_list(index_selection):
     
-    if index_name == "Philippines Stock Exchange":
+    if index_selection == "Philippines Stock Exchange":
         stock_list = pse_tickers
     else:
         stock_list = []
