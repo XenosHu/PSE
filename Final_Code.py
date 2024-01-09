@@ -155,26 +155,25 @@ else:
 st.subheader(f"{selected_stock} Stock Summary")
 if not stock_data.empty:
     # Calculate 1-Year Change
-    one_year_change = ((stock_data["C"][-1] / stock_data["C"][0]) - 1) * 100
+    one_year_change = ((stock_data["C"].iloc[-1] / stock_data["C"].iloc[0]) - 1) * 100
     
     average_vol_3m = stock_data["V"].tail(63).mean()
 
-    prev_close = stock_data["C"][-2]
-    open_price = stock_data["O"][-1]
-    volume = stock_data["V"][-1]
-    day_range = f"{stock_data['L'][-1]:,.2f}-{stock_data['H'][-1]:,.2f}"
-    fifty_two_week_range = f"{stock_data['L'].min():,.2f}-{stock_data['H'].max():,.2f}"
+    prev_close = stock_data["C"].iloc[-2] if len(stock_data["C"]) > 1 else None
+    open_price = stock_data["O"].iloc[-1] if len(stock_data["O"]) > 0 else None
+    volume = stock_data["V"].iloc[-1] if len(stock_data["V"]) > 0 else None
+    day_range = f"{stock_data['L'].iloc[-1]:,.2f}-{stock_data['H'].iloc[-1]:,.2f}" if len(stock_data["L"]) > 0 else "N/A"
+    fifty_two_week_range = f"{stock_data['L'].min():,.2f}-{stock_data['H'].max():,.2f}" if not stock_data['L'].empty else "N/A"
     
     stock_summary_data = {
-        "Prev. Close": [f"{prev_close:,.2f}"],
-        "Open": [f"{open_price:,.2f}"],
-        "1-Year Change": [f"{one_year_change:.2f}%"],
-        "Volume": [f"{volume:,.0f}"],
-        "Average Vol. (3m)": [f"{average_vol_3m:,.0f}"],
+        "Prev. Close": [f"{prev_close:,.2f}" if prev_close is not None else "N/A"],
+        "Open": [f"{open_price:,.2f}" if open_price is not None else "N/A"],
+        "1-Year Change": [f"{one_year_change:.2f}%" if one_year_change is not None else "N/A"],
+        "Volume": [f"{volume:,.0f}" if volume is not None else "N/A"],
+        "Average Vol. (3m)": [f"{average_vol_3m:,.0f}" if average_vol_3m is not None else "N/A"],
         "Day's Range": [day_range],
         "52 wk Range": [fifty_two_week_range]
     }
-
 #     # Convert the dictionary to a DataFrame
 #     df_stock_summary = pd.DataFrame.from_dict(stock_summary_data)
 
