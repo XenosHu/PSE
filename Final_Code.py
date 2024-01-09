@@ -275,7 +275,7 @@ def plot_ema_vs_closing_price(stock_symbol, start_date, end_date):
     # Display the Plotly figure in Streamlit
     st.plotly_chart(fig)
 
-st.header("Trend Analysis using Indicators")
+st.subheader("Trend Analysis Using Indicators")
 indicator_type = st.selectbox("Select Indicator Type", ["sma", "ema"])
 
 if indicator_type == "sma":
