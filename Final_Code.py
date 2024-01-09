@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import json
 
-
 raw = pd.read_csv("PSE_info.csv")
 pse_tickers = raw['symbol'].tolist()
 
@@ -68,7 +67,7 @@ def get_stock_data_pse(keyword,start_date,end_date):
     url_getstock = "https://webapi.investagrams.com/InvestaApi/Stock/GetStockHistoricalTableByStockIdAndDate"
     params_getstock = {
     'stockId': stock_id,
-    'timeRange': '36M',
+    'timeRange': '12M',
     'irt': 'a'}
     response_getstock = requests.get(url=url_getstock,headers=headers,params=params_getstock)
     df = pd.DataFrame(json.loads(response_getstock.text))
@@ -119,9 +118,7 @@ def get_stock_data_pse(keyword,start_date,end_date):
 #     return info,currency
 
 
-# datetime.today()
-
-
+datetime.today()
 st.sidebar.title("Select Parameters")
 
 selected_stock = st.sidebar.selectbox("Select a stock symbol", ticker_list)
@@ -138,7 +135,7 @@ if index_selection == "Philippines Stock Exchange":
 #other_data = get_currency(selected_stock)
 
 #-------------------------------------------------------------------------------------------------------------------------------
-with st.expander(f" ({selected_stock}) Stock Price"):
+with st.expander(f"** ({selected_stock}) Stock Price**"):
     st.write(stock_data)
 
 if stock_data.empty:
