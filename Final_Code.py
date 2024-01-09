@@ -190,7 +190,7 @@ def get_news(selected_stock):
             'pub_date': entry.published,
             'link': entry.link,
             'source_url': source_url  # Extract source URL from the source tag
-            "sentiment": sentiment
+            'sentiment': sentiment
         })
 
     news = pd.DataFrame(news_items)
