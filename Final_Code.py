@@ -13,6 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import json
+import feedparser
 
 raw = pd.read_csv("PSE_info.csv")
 pse_tickers = raw['symbol'].tolist()
@@ -176,11 +177,35 @@ else:
     st.write("Stock data is not available. Please select a valid stock.")
 
 
-# def get_news(selected_stock):
-#     news_url = 'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q=' + selected_stock
+def get_news(selected_stock):
+    news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock}'
+    feed = feedparser.parse(news_url)
+    news_items = []
+
+    for entry in feed.entries:
+        source_url = entry.source.get('url') if entry.get('source') else 'Unknown Source'
+        news_items.append({
+            'title': entry.title,
+            'pub_date': entry.published,
+            'link': entry.link,
+            'source_url': source_url  # Extract source URL from the source tag
+        })
+
+    news = pd.DataFrame(news_items)
+    return news
     
 
 st.subheader(f"{selected_stock} Top News")
+
+if not news_df.empty:
+    # Display the most recent 5 news items
+    for index, row in news_df.head(5).iterrows():
+        st.markdown(f"[{row['title']}]({row['link']})")
+        st.write(f"Published Date: {row['pub_date']}")
+        st.write(f"Source: {row['source_url']}")
+        st.write("---")  # Separator
+else:
+    st.write("No news found for the selected stock.")
 
 
 # pricing_data, fundamental_data, news  = st.tabs(["Pricing Data", "Fundamental Data", "Top News"])
