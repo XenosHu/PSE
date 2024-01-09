@@ -117,7 +117,6 @@ def get_stock_data_pse(keyword,start_date,end_date):
 #     currency = stock_data_other.info['currency']
 #     return info,currency
 
-
 datetime.today()
 st.sidebar.title("Select Parameters")
 
@@ -174,16 +173,15 @@ if not stock_data.empty:
         "Day's Range": [day_range],
         "52 wk Range": [fifty_two_week_range]
     }
-#     # Convert the dictionary to a DataFrame
-#     df_stock_summary = pd.DataFrame.from_dict(stock_summary_data)
+    # Convert the dictionary to a DataFrame
+    df_stock_summary = pd.DataFrame.from_dict(stock_summary_data)
 
-#     # Display the summary information in a table
-#     st.table(df_stock_summary)
-# else:
-#     st.write("Stock data is not available. Please select a valid stock.")
+    # Display the summary information in a table
+    st.table(df_stock_summary)
+else:
+    st.write("Stock data is not available. Please select a valid stock.")
 
 # pricing_data, fundamental_data, news  = st.tabs(["Pricing Data", "Fundamental Data", "Top News"])
-
 
 # with pricing_data:
 #     st.subheader(f'Price Movements for {selected_stock}')
@@ -404,19 +402,6 @@ if not stock_data.empty:
     
 #     return merged_df
 
-
-# new_tickerlist_nasdaq = ['AAPL','MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'AVGO', 'ASML']
-
-# new_tickerlist_sp500 = ['AAPL', 'MSFT', 'GOOG', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'LLY', 'V']
-
-# new_tickerlist_dowjones = ['AAPL', 'MSFT', 'V', 'UNH', 'JNJ', 'JPM', 'WMT', 'PG', 'HD', 'CVX']
-
-# new_tickerlist_ftse100 = ['AZN', 'SHEL', 'BA', 'BP', 'RIO', 'GSK', 'JD', 'ADM', 'CRH', 'HLN']
-
-# new_tickerlist_bse = ['RELIANCE.BO', 'TCS.BO', 'HDFCBANK.BO', 'ICICIBANK.BO', 'HINDUNILVR.BO', 'INFY.BO', 'ITC.BO', 'SBIN.BO',
-#                       'BHARTIARTL.BO', 'BAJFINANCE.BO']
-
-
 # if index_selection == "S&P 500":
 #     ticker_list_2 = new_tickerlist_sp500
 #     market_cap_df = fetch_market_cap_data(ticker_list_2)
@@ -468,61 +453,61 @@ if not stock_data.empty:
 # st.plotly_chart(fig)
 
 
-# def plot_sma_vs_closing_price(stock_symbol, start, end):
-#     # Retrieve stock data using yfinance
-#     stock_data = yf.download(stock_symbol, start, end)
+def plot_sma_vs_closing_price(stock_symbol, start, end):
+    # Retrieve stock data using yfinance
+    stock_data = get_stock_data_pse(stock_symbol, start, end)
     
-#     # Calculate Simple Moving Average (SMA)
-#     sma_period = 20
-#     stock_data['SMA'] = stock_data['Close'].rolling(window=sma_period).mean()
+    # Calculate Simple Moving Average (SMA)
+    sma_period = 20
+    stock_data['SMA'] = stock_data['C'].rolling(window=sma_period).mean()
     
-#    # Create a Plotly figure
-#     fig = go.Figure()
-#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'], mode='lines', name='Closing Price'))
-#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['SMA'], mode='lines', name=f'SMA {sma_period}'))
+   # Create a Plotly figure
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['C'], mode='lines', name='Closing Price'))
+    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['SMA'], mode='lines', name=f'SMA {sma_period}'))
     
-#     # Customize the layout
-#     fig.update_layout(
-#         xaxis_title='Date',
-#         yaxis_title= f'Price ({other_data[1]})',
-#         title=f'{stock_symbol} Closing Price vs. SMA',
-#         legend=dict(x=0, y=1)
-#     )
+    # Customize the layout
+    fig.update_layout(
+        xaxis_title='Date',
+        yaxis_title= f'Price ₱',
+        title=f'{stock_symbol} Closing Price vs. SMA',
+        legend=dict(x=0, y=1)
+    )
     
-#     # Display the Plotly figure in Streamlit
-#     st.plotly_chart(fig)
+    # Display the Plotly figure in Streamlit
+    st.plotly_chart(fig)
 
 
-# def plot_ema_vs_closing_price(stock_symbol, start, end):
-#     # Retrieve stock data using yfinance
-#     stock_data = yf.download(stock_symbol, start=start, end=end)
+def plot_ema_vs_closing_price(stock_symbol, start, end):
+    # Retrieve stock data using yfinance
+    stock_data = get_stock_data_pse(stock_symbol, start=start, end=end)
     
-#     ema_period = 20
-#     # Calculate Exponential Moving Average (EMA)
-#     stock_data['EMA'] = stock_data['Close'].ewm(span=ema_period).mean()
+    ema_period = 20
+    # Calculate Exponential Moving Average (EMA)
+    stock_data['EMA'] = stock_data['C'].ewm(span=ema_period).mean()
     
-#     # Create a Plotly figure
-#     fig = go.Figure()
-#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Close'], mode='lines', name='Closing Price'))
-#     fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['EMA'], mode='lines', name=f'EMA {ema_period}'))
+    # Create a Plotly figure
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['C'], mode='lines', name='Closing Price'))
+    fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['EMA'], mode='lines', name=f'EMA {ema_period}'))
     
-#     # Customize the layout
-#     fig.update_layout(
-#         xaxis_title='Date',
-#         yaxis_title= f'Price ({other_data[1]})',
-#         title=f'{stock_symbol} Closing Price vs. EMA',
-#         legend=dict(x=0, y=1)
-#     )
+    # Customize the layout
+    fig.update_layout(
+        xaxis_title='Date',
+        yaxis_title= f'Price ₱',
+        title=f'{stock_symbol} Closing Price vs. EMA',
+        legend=dict(x=0, y=1)
+    )
     
-#     # Display the Plotly figure in Streamlit
-#     st.plotly_chart(fig)
+    # Display the Plotly figure in Streamlit
+    st.plotly_chart(fig)
 
-# st.header("Trend Analysis using Indicators")
-# indicator_type = st.selectbox("Select Indicator Type", ["sma", "ema"])
+st.header("Trend Analysis using Indicators")
+indicator_type = st.selectbox("Select Indicator Type", ["sma", "ema"])
 
-# if indicator_type == "sma":
-#     sma_plot = plot_sma_vs_closing_price(selected_stock, start_date, end_date)
+if indicator_type == "sma":
+    sma_plot = plot_sma_vs_closing_price(selected_stock, start_date, end_date)
     
-# elif indicator_type == 'ema':
-#     ema_plot = plot_ema_vs_closing_price(selected_stock, start_date, end_date)       
+elif indicator_type == 'ema':
+    ema_plot = plot_ema_vs_closing_price(selected_stock, start_date, end_date)       
 
