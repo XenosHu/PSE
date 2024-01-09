@@ -20,16 +20,15 @@ pse_tickers = raw['symbol'].tolist()
 
 #-------------------------------------------------------------------------------------------------------------------------------
 
-# List of available indexes
 available_indexes = ["Philippines Stock Exchange"]
 
 # Sidebar: Index Selection
 index_selection = st.sidebar.selectbox("Select an Index", available_indexes)
 
+# Correctly define index_mapping as a dictionary
 index_mapping = {
-    "Philippines Stock Exchange"
+    "Philippines Stock Exchange": "PSEi"
 }
-
 
 index_symbol = index_mapping.get(index_selection)
 
