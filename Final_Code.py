@@ -172,8 +172,8 @@ if not stock_data.empty:
         "Volume": [f"{volume:,.0f}" if volume is not None else "N/A"],
         "Average Vol. (3m)": [f"{average_vol_3m:,.0f}" if average_vol_3m is not None else "N/A"],
         "Day's Range": [day_range],
-        "52 wk Range": [fifty_two_week_range]，
-        "Annual Return": [annual_return]，
+        "52 wk Range": [fifty_two_week_range],
+        "Annual Return": [annual_return],
         "Standard Deviation": [stdev]
     }
     # Convert the dictionary to a DataFrame
