@@ -186,19 +186,19 @@ def get_news(selected_stock):
     for entry in feed.entries:
         source_url = entry.source.get('url') if entry.get('source') else 'Unknown Source'
         sentiment = analyzer.polarity_scores(entry.title)
+        compound_score = sentiment['compound']  # Extract the compound score
         news_items.append({
             'title': entry.title,
             'pub_date': entry.published,
             'link': entry.link,
             'source_url': source_url,  # Extract source URL from the source tag
-            'sentiment': sentiment
+            'sentiment': compound_score
         })
 
     news = pd.DataFrame(news_items)
-    news['sentiment'].astype('int')
+    # news['sentiment'].astype('int')
     return news
     
-
 st.subheader(f"{selected_stock} Top News")
 news = get_news(selected_stock)
 
@@ -207,8 +207,8 @@ if not news.empty:
     for index, row in news.head(5).iterrows():
         st.markdown(f"[{row['title']}]({row['link']})")
         st.write(f"Published Date: {row['pub_date']}")
-        sentiment_score = news['sentiment']
-        sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "white"
+        sentiment_score = row['sentiment']
+        sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
         st.write("---")  # Separator
 else:
