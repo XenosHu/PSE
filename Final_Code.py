@@ -189,7 +189,7 @@ def get_news(selected_stock):
             'title': entry.title,
             'pub_date': entry.published,
             'link': entry.link,
-            'source_url': source_url  # Extract source URL from the source tag
+            'source_url': source_url,  # Extract source URL from the source tag
             'sentiment': sentiment
         })
 
