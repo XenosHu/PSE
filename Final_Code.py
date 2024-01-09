@@ -195,6 +195,7 @@ def get_news(selected_stock):
         })
 
     news = pd.DataFrame(news_items)
+    news['sentiment'].astype('int')
     return news
     
 
@@ -207,11 +208,16 @@ if not news.empty:
         st.markdown(f"[{row['title']}]({row['link']})")
         st.write(f"Published Date: {row['pub_date']}")
         sentiment_score = news['sentiment']
-        sentiment_text = "Positive:" if sentiment_score > 0 else "Negative:" if sentiment_score < 0 else "Neutral:"
-        st.write(f"Sentiment: {sentiment_text} ({sentiment_score})")
+        sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "white"
+        st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
         st.write("---")  # Separator
 else:
     st.write("No news found for the selected stock.")
+
+
+
+        
+        
 
 
 # pricing_data, fundamental_data, news  = st.tabs(["Pricing Data", "Fundamental Data", "Top News"])
