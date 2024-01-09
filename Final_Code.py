@@ -184,11 +184,13 @@ def get_news(selected_stock):
 
     for entry in feed.entries:
         source_url = entry.source.get('url') if entry.get('source') else 'Unknown Source'
+        sentiment = analyzer.polarity_scores(entry.title)
         news_items.append({
             'title': entry.title,
             'pub_date': entry.published,
             'link': entry.link,
             'source_url': source_url  # Extract source URL from the source tag
+            "sentiment": sentiment
         })
 
     news = pd.DataFrame(news_items)
@@ -203,7 +205,9 @@ if not news.empty:
     for index, row in news.head(5).iterrows():
         st.markdown(f"[{row['title']}]({row['link']})")
         st.write(f"Published Date: {row['pub_date']}")
-        st.write(f"Source: {row['source_url']}")
+        sentiment_score = news['sentiment']
+        sentiment_text = "Positive:" if sentiment_score > 0 else "Negative:" if sentiment_score < 0 else "Neutral:"
+        st.write(f"Sentiment: {sentiment_text} ({sentiment_score})")
         st.write("---")  # Separator
 else:
     st.write("No news found for the selected stock.")
@@ -264,26 +268,26 @@ else:
 #-------------------------------------------------------------------------------------------------------------------------------
 
 # @st.cache_data
-def print_stock_news(stock_symbol):
-    stock = yf.Ticker(stock_symbol)
-    news = stock.news
-    top_news = []
-    for item in news[:5]:
-        title = item['title']
-        link = item['link']
-        publish_date = item['providerPublishTime']
+# def print_stock_news(stock_symbol):
+#     stock = yf.Ticker(stock_symbol)
+#     news = stock.news
+#     top_news = []
+#     for item in news[:5]:
+#         title = item['title']
+#         link = item['link']
+#         publish_date = item['providerPublishTime']
         
-        # Analyze sentiment of the news title
-        sentiment = analyzer.polarity_scores(title)
+#         # Analyze sentiment of the news title
+#         sentiment = analyzer.polarity_scores(title)
         
-        news_info = {
-            "title": title,
-            "link": link,
-            "published_date": publish_date,
-            "sentiment": sentiment['compound']  # Compound sentiment score
-        }
-        top_news.append(news_info)
-    return top_news
+#         news_info = {
+#             "title": title,
+#             "link": link,
+#             "published_date": publish_date,
+#             "sentiment": sentiment['compound']  # Compound sentiment score
+#         }
+#         top_news.append(news_info)
+#     return top_news
 
 # if selected_stock:
 #     top_5_news = print_stock_news(selected_stock)
