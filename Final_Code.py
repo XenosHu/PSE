@@ -196,10 +196,11 @@ def get_news(selected_stock):
     
 
 st.subheader(f"{selected_stock} Top News")
+news = get_news(selected_stock)
 
-if not news_df.empty:
+if not news.empty:
     # Display the most recent 5 news items
-    for index, row in news_df.head(5).iterrows():
+    for index, row in news.head(5).iterrows():
         st.markdown(f"[{row['title']}]({row['link']})")
         st.write(f"Published Date: {row['pub_date']}")
         st.write(f"Source: {row['source_url']}")
