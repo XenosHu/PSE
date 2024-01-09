@@ -176,6 +176,7 @@ if not stock_data.empty:
 else:
     st.write("Stock data is not available. Please select a valid stock.")
 
+analyzer = SentimentIntensityAnalyzer()
 
 def get_news(selected_stock):
     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock}'
