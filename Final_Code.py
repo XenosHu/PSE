@@ -62,7 +62,7 @@ def get_stock_data_pse(keyword,start_date,end_date):
     'Origin':'https://www.investagrams.com',
     'Referer':'https://www.investagrams.com/'
     }
-    url_search = "https://webapi.investagrams.com/InvestaApi/Stock/SearchStockSnippet?keyword=wlcon&userDefaultExchangeType=4&selectedExchangeType=0&limit=0&cv=1704729600-0-v3"
+    url_search = "https://webapi.investagrams.com/InvestaApi/Stock/SearchStockSnippet"
     params_search = {'keyword': keyword, 'userDefaultExchangeType': '4', 'selectedExchangeType': '0', 'limit': '0', 'cv': '1704729600-0-v3'}
     response_search = requests.get(url=url_search,headers=headers,params=params_search)
     stock_id = json.loads(response_search.text)[0]['StockId']
