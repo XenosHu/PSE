@@ -453,9 +453,9 @@ else:
 # st.plotly_chart(fig)
 
 
-def plot_sma_vs_closing_price(stock_symbol, start, end):
+def plot_sma_vs_closing_price(stock_symbol, start_date, end_date):
     # Retrieve stock data using yfinance
-    stock_data = get_stock_data_pse(stock_symbol, start, end)
+    stock_data = get_stock_data_pse(stock_symbol, start_date, end_date)
     
     # Calculate Simple Moving Average (SMA)
     sma_period = 20
@@ -477,9 +477,9 @@ def plot_sma_vs_closing_price(stock_symbol, start, end):
     # Display the Plotly figure in Streamlit
     st.plotly_chart(fig)
 
-def plot_ema_vs_closing_price(stock_symbol, start, end):
+def plot_ema_vs_closing_price(stock_symbol, start_date, end_date):
     # Retrieve stock data using yfinance
-    stock_data = get_stock_data_pse(stock_symbol, start=start, end=end)
+    stock_data = get_stock_data_pse(stock_symbol, start_date, end_date)
     
     ema_period = 20
     
