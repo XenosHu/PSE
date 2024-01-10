@@ -421,7 +421,7 @@ def get_annual_report(keyword):
     return response
 
 
-get_annual_report(selected_stock_name)
+fin_url = get_annual_report(selected_stock_name)
 st.subheader(f"{selected_stock_name} Most Recent Financial Report")
 st.markdown(f"[{selected_stock_name} Link to the report]({fin_url})")
 
