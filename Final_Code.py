@@ -418,7 +418,6 @@ def get_annual_report(keyword):
     download_idurl = match.group(1)
     res_url = f"https://edge.pse.com.ph{download_idurl}"
     return res_url
-    return response
 
 
 fin_url = get_annual_report(selected_stock_name)
