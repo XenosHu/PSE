@@ -290,6 +290,7 @@ elif indicator_type == 'ema':
 analyzer = SentimentIntensityAnalyzer()
 
 def get_news(selected_stock_name):
+    selected_stock_name = selected_stock_name.replace(',', '').replace('.', '').replace('"', '').replace(';', '').replace(':', '')
     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
     feed = feedparser.parse(news_url)
     news_items = []
