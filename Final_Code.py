@@ -375,19 +375,21 @@ elif indicator_type == 'ema':
 
 
 def get_annual_report(keyword):
-    translator = str.maketrans('', '', string.punctuation)
-    # Remove all punctuation from the stock name
-    selected_stock_name = selected_stock_name.translate(translator)
-    selected_stock_name = selected_stock_name.replace(" ", "%20")
+    # Split the keyword and take the first two words
+    words = keyword.split()
+    if len(words) >= 2:
+        modified_keyword = "%20".join(words[:2])  # Join the first two words with '%20' for URL encoding
+    else:
+        modified_keyword = "%20".join(words)  # Use the whole keyword if it's less than two words
 
     headers_getid = {
         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        'Content-Type': 'application/json',  # This is typically set automatically when using json parameter
-        'Referer':'https://edge.pse.com.ph/companyDisclosures/form.do?cmpy_id=665'
+        'Content-Type': 'application/json',
+        'Referer': 'https://edge.pse.com.ph/companyDisclosures/form.do?cmpy_id=665'
     }
 
-    url_getid = f"https://edge.pse.com.ph/autoComplete/searchCompanyNameSymbol.ax?term={keyword}"
-    response = requests.get(url=url_getid,headers=headers_getid)
+    url_getid = f"https://edge.pse.com.ph/autoComplete/searchCompanyNameSymbol.ax?term={modified_keyword}"
+    response = requests.get(url=url_getid, headers=headers_getid)
     if not response:
         st.error("No company found for the given keyword.")
         return None
