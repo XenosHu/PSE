@@ -345,7 +345,7 @@ def get_annual_report(keyword):
     url_getid = f"https://edge.pse.com.ph/autoComplete/searchCompanyNameSymbol.ax?term={keyword}"
     response = requests.get(url=url_getid,headers=headers_getid)
     
-    if not response_json:
+    if not response:
         st.error("No company found for the given keyword.")
         return None
         
