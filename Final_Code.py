@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import json
 import feedparser
+import string
 
 raw = pd.read_csv("PSE_info.csv")
 pse_tickers = raw['symbol'].tolist()
@@ -290,7 +291,9 @@ elif indicator_type == 'ema':
 analyzer = SentimentIntensityAnalyzer()
 
 def get_news(selected_stock_name):
-    selected_stock_name = selected_stock_name.replace(',', '').replace('.', '').replace('"', '').replace(';', '').replace(':', '')
+    translator = str.maketrans('', '', string.punctuation)
+    # Remove all punctuation from the stock name
+    selected_stock_name = selected_stock_name.translate(translator)
     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
     feed = feedparser.parse(news_url)
     news_items = []
