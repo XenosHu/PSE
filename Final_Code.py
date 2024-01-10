@@ -113,7 +113,7 @@ selected_stock = st.sidebar.selectbox("Select a stock symbol", ticker_list)
 default_start_date = datetime.today() - timedelta(weeks=52)
 start_date = st.sidebar.date_input("Start Date", default_start_date)
 end_date = st.sidebar.date_input("End Date")
-selected_stock_name = raw[raw['symbol'] == 'WLCON']['company_name'].iloc[0]
+selected_stock_name = raw[raw['symbol'] == selected_stock]['company_name'].iloc[0]
 
 if start_date >= end_date:
     st.error("Error: Start date must be before end date.")
