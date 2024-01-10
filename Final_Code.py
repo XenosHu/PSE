@@ -112,6 +112,7 @@ selected_stock = st.sidebar.selectbox("Select a stock symbol", ticker_list)
 default_start_date = datetime.today() - timedelta(weeks=52)
 start_date = st.sidebar.date_input("Start Date", default_start_date)
 end_date = st.sidebar.date_input("End Date")
+selected_stock_name = raw[raw['symbol'] == 'WLCON']['company_name'].iloc[0]
 
 if start_date >= end_date:
     st.error("Error: Start date must be before end date.")
@@ -288,8 +289,8 @@ elif indicator_type == 'ema':
 
 analyzer = SentimentIntensityAnalyzer()
 
-def get_news(selected_stock):
-    news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock}'
+def get_news(selected_stock_name):
+    news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
     feed = feedparser.parse(news_url)
     news_items = []
 
@@ -309,7 +310,7 @@ def get_news(selected_stock):
     return news
     
 st.subheader(f"{selected_stock} Top News")
-news = get_news(selected_stock)
+news = get_news(selected_stock_name)
 
 if not news.empty:
     # Display the most recent 5 news items
