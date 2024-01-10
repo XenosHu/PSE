@@ -294,6 +294,7 @@ def get_news(selected_stock_name):
     translator = str.maketrans('', '', string.punctuation)
     # Remove all punctuation from the stock name
     selected_stock_name = selected_stock_name.translate(translator)
+    selected_stock_name = selected_stock_name.replace(" ", "%20")
     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
     feed = feedparser.parse(news_url)
     news_items = []
