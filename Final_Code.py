@@ -383,35 +383,35 @@ def get_annual_report(keyword):
 
     url_getid = f"https://edge.pse.com.ph/autoComplete/searchCompanyNameSymbol.ax?term={keyword}"
     response = requests.get(url=url_getid,headers=headers_getid)
-    if not response:
-        st.error("No company found for the given keyword.")
-        return None
-    id = json.loads(response.text)[0]['cmpyId']
-    url_getedge_no ="https://edge.pse.com.ph/companyDisclosures/search.ax"
-    headers_getedge_no = {
-        'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        'Content-Type': 'application/json'
-    }
-    params_getedge_no = {
-        'keyword': id,
-        'tmplNm': ''}
-    response = requests.get(url=url_getedge_no,headers=headers_getedge_no,params=params_getedge_no)
-    res = response.text
-    pattern = r"openPopup\('([^']+)'\);return false;\"\>Annual Report"
+    # if not response:
+    #     st.error("No company found for the given keyword.")
+    #     return None
+    # id = json.loads(response.text)[0]['cmpyId']
+    # url_getedge_no ="https://edge.pse.com.ph/companyDisclosures/search.ax"
+    # headers_getedge_no = {
+    #     'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    #     'Content-Type': 'application/json'
+    # }
+    # params_getedge_no = {
+    #     'keyword': id,
+    #     'tmplNm': ''}
+    # response = requests.get(url=url_getedge_no,headers=headers_getedge_no,params=params_getedge_no)
+    # res = response.text
+    # pattern = r"openPopup\('([^']+)'\);return false;\"\>Annual Report"
 
-    match = re.search(pattern, res)
-    edge_no = match.group(1)
-    res_url = f"https://edge.pse.com.ph/openDiscViewer.do?edge_no={edge_no}"
-    response = requests.get(url=res_url, headers=headers_getedge_no)
-    pattern1 = r'<iframe src="([^"]+)" id=\"viewContents\"'
-    match = re.search(pattern1, response.text)
-    if not match:
-        st.error("No annual report link found.")
-        return None
-    download_idurl = match.group(1)
-    res_url = f"https://edge.pse.com.ph{download_idurl}"
-    return res_url
-
+    # match = re.search(pattern, res)
+    # edge_no = match.group(1)
+    # res_url = f"https://edge.pse.com.ph/openDiscViewer.do?edge_no={edge_no}"
+    # response = requests.get(url=res_url, headers=headers_getedge_no)
+    # pattern1 = r'<iframe src="([^"]+)" id=\"viewContents\"'
+    # match = re.search(pattern1, response.text)
+    # if not match:
+    #     st.error("No annual report link found.")
+    #     return None
+    # download_idurl = match.group(1)
+    # res_url = f"https://edge.pse.com.ph{download_idurl}"
+    # return res_url
+    return response
 
 
 fin_url = get_annual_report(selected_stock)
