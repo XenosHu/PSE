@@ -383,9 +383,10 @@ def get_annual_report(keyword):
 
     url_getid = f"https://edge.pse.com.ph/autoComplete/searchCompanyNameSymbol.ax?term={keyword}"
     response = requests.get(url=url_getid,headers=headers_getid)
-    # if not response:
-    #     st.error("No company found for the given keyword.")
-    #     return None
+    if not response:
+        st.error("No company found for the given keyword.")
+        return None
+    st.write(response.text)
     # id = json.loads(response.text)[0]['cmpyId']
     # url_getedge_no ="https://edge.pse.com.ph/companyDisclosures/search.ax"
     # headers_getedge_no = {
@@ -411,12 +412,12 @@ def get_annual_report(keyword):
     # download_idurl = match.group(1)
     # res_url = f"https://edge.pse.com.ph{download_idurl}"
     # return res_url
-    return response
+    # return response
 
 
-fin_url = get_annual_report(selected_stock)
+get_annual_report(selected_stock)
 st.subheader(f"{selected_stock_name} Most Recent Financial Report")
-st.markdown(f"[{selected_stock_name} Link to the report]({fin_url})")
+# st.markdown(f"[{selected_stock_name} Link to the report]({fin_url})")
 
 #-------------------------------------------------------------------------------------------------------------------------------
 
