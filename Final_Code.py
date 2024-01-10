@@ -375,6 +375,11 @@ elif indicator_type == 'ema':
 
 
 def get_annual_report(keyword):
+    translator = str.maketrans('', '', string.punctuation)
+    # Remove all punctuation from the stock name
+    selected_stock_name = selected_stock_name.translate(translator)
+    selected_stock_name = selected_stock_name.replace(" ", "%20")
+
     headers_getid = {
         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         'Content-Type': 'application/json',  # This is typically set automatically when using json parameter
