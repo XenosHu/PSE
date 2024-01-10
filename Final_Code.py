@@ -142,7 +142,7 @@ else:
 
     st.plotly_chart(fig)
 
-st.subheader(f"{selected_stock} Stock Price Data")
+st.subheader(f"{selected_stock_name}({selected_stock}) Stock Price Data")
 if not stock_data.empty:
     # Calculate 1-Year Change
     one_year_change = ((stock_data["C"].iloc[-1] / stock_data["C"].iloc[0]) - 1) * 100
@@ -183,7 +183,7 @@ if not stock_data.empty:
     df_stock_summary = pd.DataFrame.from_dict(stock_summary_data)
     df_transposed = df_stock_summary.T
 
-    st.subheader(f"{selected_stock} Stock Summary")
+    st.subheader(f"{selected_stock_name}({selected_stock}) Stock Summary")
     # Display in Streamlit
     st.table(df_transposed)
 else:
