@@ -300,80 +300,6 @@ elif indicator_type == 'ema':
 
 #-------------------------------------------------------------------------------------------------------------------------------
 
-# def get_annual_report(keyword):
-#     headers_getid = {
-#         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-#         'Content-Type': 'application/json',
-#         'Referer': 'https://edge.pse.com.ph/companyDisclosures/form.do?cmpy_id=665'
-#     }
-
-#     url_getid = f"https://edge.pse.com.ph/autoComplete/searchCompanyNameSymbol.ax?term={keyword}"
-#     response = requests.get(url=url_getid, headers=headers_getid)
-#     response_json = json.loads(response.text)
-
-#     if not response_json:
-#         st.error("No company found for the given keyword.")
-#         return None
-
-#     id = response_json[0]['cmpyId']
-
-#     url_getedge_no = "https://edge.pse.com.ph/companyDisclosures/search.ax"
-#     headers_getedge_no = headers_getid  # Reusing the same headers
-#     params_getedge_no = {
-#         'keyword': id,
-#         'tmplNm': ''}
-#     response = requests.get(url=url_getedge_no, headers=headers_getedge_no, params=params_getedge_no)
-#     res = response.text
-#     pattern = r"openPopup\('([^']+)'\);return false;\"\>Annual Report"
-
-#     match = re.search(pattern, res)
-#     if not match:
-#         st.error("No annual report link found.")
-#         return None
-
-#     edge_no = match.group(1)
-#     res_url = f"https://edge.pse.com.ph/openDiscViewer.do?edge_no={edge_no}"
-#     return res_url
-
-# def get_annual_report(keyword):
-#     headers_getid = {
-#         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-#         'Content-Type': 'application/json',  # This is typically set automatically when using json parameter
-#         'Referer':'https://edge.pse.com.ph/companyDisclosures/form.do?cmpy_id=665'
-#     }
-
-#     url_getid = f"https://edge.pse.com.ph/autoComplete/searchCompanyNameSymbol.ax?term={keyword}"
-#     response = requests.get(url=url_getid,headers=headers_getid)
-    
-#     if not response:
-#         st.error("No company found for the given keyword.")
-#         return None
-        
-#     id = json.loads(response.text)[0]['cmpyId']
-#     url_getedge_no ="https://edge.pse.com.ph/companyDisclosures/search.ax"
-#     headers_getedge_no = {
-#         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-#         'Content-Type': 'application/json'
-#     }
-#     params_getedge_no = {
-#         'keyword': id,
-#         'tmplNm': ''}
-#     response = requests.get(url=url_getedge_no,headers=headers_getedge_no,params=params_getedge_no)
-#     res = response.text
-#     pattern = r"openPopup\('([^']+)'\);return false;\"\>Annual Report"
-
-#     match = re.search(pattern, res)
-
-#     if not match:
-#         st.error("No annual report link found.")
-#         return None
-        
-#     edge_no = match.group(1)
-#     res_url = f"https://edge.pse.com.ph/openDiscViewer.do?edge_no={edge_no}"
-#     return res_url
-
-
-
 def get_annual_report(keyword):
     # Split the keyword and take the first two words
     words = keyword.split()
@@ -421,7 +347,7 @@ def get_annual_report(keyword):
 
 
 fin_url = get_annual_report(selected_stock_name)
-st.subheader(f"{selected_stock_name} Most Recent Financial Report")
+st.subheader(f"{selected_stock_name} ({selected_stock})Most Recent Financial Report")
 st.markdown(f"[{selected_stock_name} Link to the report]({fin_url})")
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -467,7 +393,6 @@ if not news.empty:
 else:
     st.write("No news found for the selected stock.")
     
-
 #-------------------------------------------------------------------------------------------------------------------------------
 
 
