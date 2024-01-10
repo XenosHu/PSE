@@ -22,7 +22,7 @@ from langchain_community.llms import OpenAI
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
-from langchain_community.agents.agent_toolkits import (
+from langchain_community.agent_toolkits import (
     create_vectorstore_agent,
     VectorStoreToolkit,
     VectorStoreInfo
