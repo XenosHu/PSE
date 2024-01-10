@@ -16,6 +16,17 @@ import json
 import feedparser
 import string
 import re
+import os
+import tempfile
+from langchain.llms import OpenAI
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.document_loaders import PyPDFLoader
+from langchain.vectorstores import Chroma
+from langchain.agents.agent_toolkits import (
+    create_vectorstore_agent,
+    VectorStoreToolkit,
+    VectorStoreInfo
+)
 
 raw = pd.read_csv("PSE_info.csv")
 pse_tickers = raw['symbol'].tolist()
@@ -363,3 +374,65 @@ if not news.empty:
 else:
     st.write("No news found for the selected stock.")
     
+
+#-------------------------------------------------------------------------------------------------------------------------------
+
+
+# # Use Streamlit's secrets for the API key
+# api_key = st.secrets["OPENAI_API_KEY"]
+# os.environ['OPENAI_API_KEY'] = api_key
+
+# # Create instance of OpenAI LLM
+# llm = OpenAI(temperature=0.1, verbose=True)
+# embeddings = OpenAIEmbeddings()
+
+# # User inputs ticker symbol
+# ticker_input = st.text_input("Enter Ticker Symbol:")
+
+# if ticker_input:
+#     current_year = datetime.now().year
+#     pdf_content = None
+
+#     # Attempt to download PDF for the past five years
+#     for year in range(current_year, current_year - 5, -1):  # Try the last five years
+#         pdf_content = download_pdf(ticker_input, year)
+#         if pdf_content:
+#             break
+
+#     if not pdf_content:
+#         st.error("No report found for the given ticker in the last 5 years.")
+#     else:
+#         # Process the PDF content
+#         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+#             tmp_file.write(pdf_content)
+#             temp_file_path = tmp_file.name
+
+#         loader = PyPDFLoader(temp_file_path)
+#         pages = loader.load_and_split()
+
+#         store = Chroma.from_documents(pages, embeddings, collection_name='uploaded_document')
+#         vectorstore_info = VectorStoreInfo(
+#             name="uploaded_document",
+#             description="A document uploaded by the user",
+#             vectorstore=store
+#         )
+
+#         toolkit = VectorStoreToolkit(vectorstore_info=vectorstore_info)
+#         agent_executor = create_vectorstore_agent(llm=llm, toolkit=toolkit, verbose=True)
+
+#         # Set the default query
+#         default_query = (
+#             "Access all the links of the news and generate a comprehensive report summary to: "
+#             "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
+#             "2. In conclusion, recommended to the investor to invest or not to invest in this stock. "
+#             "3. In no more than 300 words, use a professional tone."
+#         )
+
+#         response = agent_executor.run(default_query)
+#         st.write(response)
+
+#         with st.expander('Document Similarity Search'):
+#             search = store.similarity_search_with_score(default_query)
+#             st.write(search[0][0].page_content)
+
+
