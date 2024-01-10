@@ -309,7 +309,7 @@ def get_news(selected_stock_name):
     news = pd.DataFrame(news_items)
     return news
     
-st.subheader(f"{selected_stock_name} Top News")
+st.subheader(f"{selected_stock} Top News")
 news = get_news(selected_stock_name)
 
 if not news.empty:
