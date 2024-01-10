@@ -242,7 +242,7 @@ def plot_sma_vs_closing_price(stock_symbol, start_date, end_date):
     fig.update_layout(
         xaxis_title='Date',
         yaxis_title= f'Price ₱',
-        title=f'{stock_symbol} Closing Price vs. SMA',
+        title=f'{selected_stock_name}({selected_stock}) Closing Price vs. SMA',
         legend=dict(x=0, y=1)
     )
     
@@ -271,7 +271,7 @@ def plot_ema_vs_closing_price(stock_symbol, start_date, end_date):
     fig.update_layout(
         xaxis_title='Date',
         yaxis_title= f'Price ₱',
-        title=f'{stock_symbol} Closing Price vs. EMA',
+        title=f'{selected_stock_name}({selected_stock}) Closing Price vs. EMA',
         legend=dict(x=0, y=1)
     )
     
@@ -348,7 +348,7 @@ def get_news(selected_stock_name):
     news = pd.DataFrame(news_items)
     return news
     
-st.subheader(f"{selected_stock} Top News")
+st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 news = get_news(selected_stock_name)
 
 if not news.empty:
