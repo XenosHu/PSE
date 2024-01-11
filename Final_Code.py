@@ -426,18 +426,20 @@ def get_googlenews(keyword):
 
 st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 
-news_url = [get_googlenews(selected_stock_name)]
-news_url_df = pd.DataFrame(news_url[0])
-if news_url!={}:
-    for d in news_url[0]:   
-        st.markdown(f"[{d['name']}]({d['url']})")
-        st.write(f"Published Date: {d['date']}")
-        sentiment_score = d['sentiment']
-        sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
-        st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
-        st.write("---")  # Separator
-else:
-    st.write("No news found for the selected stock.")
+def display_data(sorted_data):
+    news_url = get_googlenews(sorted_data)
+    st.write(pd.DataFrame(news_url))
+    if news_url!={}:
+        for d in news_url:   
+            st.markdown(f"[{d['name']}]({d['url']})")
+            st.write(f"Published Date: {d['date']}")
+            sentiment_score = d['sentiment']
+            sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
+            st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
+            st.write("---")  # Separator
+    else:
+        st.write("No news found for the selected stock.")
+    return sorted_data
 
     
 def get_rdcontent(ul):
@@ -486,7 +488,7 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(api_key=api_key, temperature=0.1)
 
 # Fetch the content from the news URLs
-content = get_rdcontent(news_url[0])
+content = get_rdcontent(display_data(selected_stock_name))
 # combined_content = ' '.join(content)  # Join all contents into a single string
 
 # Summarizing each article separately
