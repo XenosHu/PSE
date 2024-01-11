@@ -404,7 +404,8 @@ def get_googlenews(keyword):
         return sorted_data
 
 st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
-news_url = get_googlenews("selected_stock_name")
+
+news_url = get_googlenews(selected_stock_name)
 news_url_df = pd.DataFrame(news_url)
 
 st.write(news_url_df)
