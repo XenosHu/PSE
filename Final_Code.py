@@ -443,11 +443,13 @@ def display_data(sorted_data):
 
     
 def get_rdcontent(ul):
+    st.write(ul)
     content = []
     headers = {
                     'User-Agent': "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
                     'Content-Type': 'application/json'}
     for u in ul:
+        st.write(u['url'])
         response = requests.get(url=u['url'], headers=headers)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
