@@ -505,7 +505,6 @@ try:
     # Wrapping the query in a list
     response = llm.generate([query], max_tokens=1000)
     # Clean the text
-    cleaned_output = response.strip()  # Removes extra spaces and newlines
     
     # Use markdown for better formatting
     st.markdown("### AI Generated Summary")
