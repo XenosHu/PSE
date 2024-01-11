@@ -492,11 +492,11 @@ combined_content = ' '.join(content)  # Join all contents into a single string
 
 # Prepare the query for the model
 query = (
-    "Analyze the following text and generate a comprehensive report summary: "
+    "Analyze following text and generate a comprehensive report: "
     f"{combined_content} "
-    "Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
-    "In conclusion, recommend to the investor to invest or not to invest in this stock. "
-    "Provide the summary in no more than 300 words, using a clear and professional tone."
+    "Summarize insights based on given materials and the recent challenges or achievements that company faces. "
+    "In conclusion, recommend to investors to invest or not to invest in this stock. "
+    "Provide report in no more than 300 words, using a clear and professional tone."
 )
 
 
