@@ -420,7 +420,7 @@ def get_googlenews(keyword):
 
     sorted_data = sorted(res_list, key=lambda x: x["date"], reverse=True)
     if len(sorted_data)>3:
-        return sorted_data[:1]
+        return sorted_data[:3]
     else:
         return sorted_data
 
@@ -488,17 +488,29 @@ llm = OpenAI(api_key=api_key, temperature=0.1)
 
 # Fetch the content from the news URLs
 content = get_rdcontent(news_url)
-combined_content = ' '.join(content)  # Join all contents into a single string
+# combined_content = ' '.join(content)  # Join all contents into a single string
+
+# Summarizing each article separately
+summarized_articles = []
+for article in content:
+    summary_query = (
+        "Summarize this article in less than 100 words: "
+        f"{article}"
+    )
+    try:
+        summary = llm.generate([summary_query], max_tokens=100).generations[0][0].text
+        summarized_articles.append(summary)
+    except Exception as e:
+        st.error(f"Error summarizing article: {e}")
 
 # Prepare the query for the model
 query = (
-    "Analyze following text and generate a comprehensive report: "
-    f"{combined_content} "
+    "Analyze following news summaries to generate a comprehensive report: "
+    f"{' '.join(summarized_articles)} "
     "Summarize insights based on given materials and the recent challenges or achievements that company faces. "
     "In conclusion, recommend to investors to invest or not to invest in this stock. "
     "Provide report in no more than 300 words, using a clear and professional tone."
 )
-
 
 # Generate the response using the OpenAI model from Langchain
 try:
