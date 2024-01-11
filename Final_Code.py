@@ -369,39 +369,39 @@ if fin_url:
 
 #-------------------------------------------------------------------------------------------------------------------------------
 
-analyzer = SentimentIntensityAnalyzer()
+# analyzer = SentimentIntensityAnalyzer()
 
-def get_news(selected_stock_name):
-    translator = str.maketrans('', '', string.punctuation)
-    # Remove all punctuation from the stock name
-    selected_stock_name = selected_stock_name.translate(translator)
-    selected_stock_name = selected_stock_name.replace(" ", "%20")
-    news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
-    headers = {
-        'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        'Content-Type': 'application/json',
-        'Cookie' : 'ADS_VISITOR_ID=00000000-0000-0000-0000-000000000000; S=billing-ui-v3=mwWKsavKfFRVJCdtMr0LkBabkWInEe5c:billing-ui-v3-efe=mwWKsavKfFRVJCdtMr0LkBabkWInEe5c; SEARCH_SAMESITE=CgQIjZoB; HSID=A7tl0A4zKGwLDWBZD; SSID=AV_YykyS8U4fqrTsV; APISID=zXTQ1qnjzsdViyvR/A2G9zM7iw-kd3dj2A; SAPISID=xDK3H4bSpYhkaMm1/AIZNeSZsBJevrayRy; __Secure-1PAPISID=xDK3H4bSpYhkaMm1/AIZNeSZsBJevrayRy; __Secure-3PAPISID=xDK3H4bSpYhkaMm1/AIZNeSZsBJevrayRy; GN_PREF=W251bGwsIkNBSVNEQWlwM2ZPc0JoQ1FrWm13QWciXQ__; _ga=GA1.1.227433637.1704783527; SID=fAi3ME1qoAVp3WWOgrHyQd6SFmBkCl9edLWlAFTm9yTzIPuw6zXixzgKx8I-IRYRxEheiA.; __Secure-1PSID=fAi3ME1qoAVp3WWOgrHyQd6SFmBkCl9edLWlAFTm9yTzIPuwgbzNitE3za6hbwyheS_FPQ.; __Secure-3PSID=fAi3ME1qoAVp3WWOgrHyQd6SFmBkCl9edLWlAFTm9yTzIPuwGIABrkwi1Adt28gCBLcKTw.; AEC=Ae3NU9Mauigh2jELiazdCFSWhDcmL0ChGqGYMg4T1HLdWRapg9v0K_1oag; 1P_JAR=2024-01-11-01; OTZ=7377205_76_76_104100_72_446760; _ga_SYGF1G18MM=GS1.1.1704936314.3.0.1704936315.0.0.0; NID=511=J2p2L9i0lCjuzszZ6Rc4CDORTkAIPMWA0GDFyRtv2dlFtJtwmy_Suna_0cuLLkbkGbHXmGuGCyIprMx-j74BYm-CdqEl1Ckhfub0CWyE-BuQGGuI25c11WHYCac3sru9HxSdCm7yg8wlCrVevLguKx2uIAtX30LYv-lDh3W1Nfyruup2xZThikaj730FS5pDbXI8ch3u1P_5F1IZI652IpJrKKIRaTjGC2Q6OSOiSB0YfIlYN3GTZasXbhQjPf7lyomId1fvzI8xevdmKmLXwa-kTo3vR5to4niWSsQsmdlAyFWbJPVJFRopDsUtN5rBqVTfJzIcZxyfrsHhS1oIEjZ23ek0-pQXqWfcfy01hNBPizcFFKntjII3jfBgfjtrzbKO0-39wRY8GPn-7FktB89OmL4Kp_Jr8O1lhhTEPGHuXaFf8he9Gny8yYXl6q23Ak1uj4VrVYwCPAkO44kRCm2hZpJnIkVj4QNqllKEh2ZSiFjODf5t4ksMPwRk43wxpDV1v920JoapcsBsK-01TNus351Q09Y-KpBigOIK4ez0Pa7huz1Alkhht6sYBVdGLXC7mVK1IdpxsB9-ixkwZg2_FSIZ8aj0mNdveZXPUx81dTBoSEjsfoIwcIKjQketykTaeM4EMqzJ5Md6b4FGg2-duWLFJBeVMWHdP61ghOUal1XvjRGKO5L1UFqTC210ityefXCuMbMeXOhQg38Q8WDceHBszIak_Rl21iRGDH4m8olZ_f_ZCt6OmIPvqjoXTmcCi_TpFS6jm3D2hvA0zmqnXMXSVRddtxRfmQiEOQ4qY-BnTp3vjeOdfLAkAdTRidIg9_bkvE2gawgqUaMuI2savikY-kTXVY2FHXtQd3PnkxXwv2O-sCDlaBQ2jgBIpDNIJklEHco8d1Jl4wAj9x1-UdZWkjddn5Kcczt4bVlfYciqmtJw7Lp-4-24nII5kECZuT-oPs9dmuG330MFMpKLvjUXPiX2Z-PK-wEOJmAUyn9nqLlFR9dHcTC-dMSEF3HS_stLwPBhDmcIsH2WPlpqLjqs_iWsL507Hobbtf2mXw; __Secure-1PSIDTS=sidts-CjIBPVxjShncpCDh30nav9iKdTscy491iUyDaPCrQYxT4bVcC6rlATJUXScDxhbelohfOxAA; __Secure-3PSIDTS=sidts-CjIBPVxjShncpCDh30nav9iKdTscy491iUyDaPCrQYxT4bVcC6rlATJUXScDxhbelohfOxAA; SIDCC=ABTWhQEin-VyM5JrtgziHqVcw4vEkqKn8hz_Ak8mdUW0yMUGFElNF7BSBuJlSqNw_esxhZTyqdUu; __Secure-1PSIDCC=ABTWhQFKPjqta4w_Q1nawmXpUuS2oHlhkNvYFoHE4D2u_TfIqF0Si59p8-7fIM8mw-ucL5-CwfQ; __Secure-3PSIDCC=ABTWhQGwZZMlriobXZawp0zAdDE0TzHcqw7K0ZM8zvKJtQ4lrUZ0wR9ErsFQuwlUg2NHccTtoN7z',
-        'Sec-Fetch-Dest':'document',
-        'Sec-Fetch-Mode':'navigate',
-        'Sec-Fetch-Site':'none',
-        'Sec-Fetch-User':'?1',
-        'Upgrade-Insecure-Requests':'1'}
-    response = requests.get(url=news_url, headers=headers)
-    response.text
+# def get_news(selected_stock_name):
+#     translator = str.maketrans('', '', string.punctuation)
+#     # Remove all punctuation from the stock name
+#     selected_stock_name = selected_stock_name.translate(translator)
+#     selected_stock_name = selected_stock_name.replace(" ", "%20")
+#     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
+#     headers = {
+#         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+#         'Content-Type': 'application/json',
+#         'Cookie' : 'ADS_VISITOR_ID=00000000-0000-0000-0000-000000000000; S=billing-ui-v3=mwWKsavKfFRVJCdtMr0LkBabkWInEe5c:billing-ui-v3-efe=mwWKsavKfFRVJCdtMr0LkBabkWInEe5c; SEARCH_SAMESITE=CgQIjZoB; HSID=A7tl0A4zKGwLDWBZD; SSID=AV_YykyS8U4fqrTsV; APISID=zXTQ1qnjzsdViyvR/A2G9zM7iw-kd3dj2A; SAPISID=xDK3H4bSpYhkaMm1/AIZNeSZsBJevrayRy; __Secure-1PAPISID=xDK3H4bSpYhkaMm1/AIZNeSZsBJevrayRy; __Secure-3PAPISID=xDK3H4bSpYhkaMm1/AIZNeSZsBJevrayRy; GN_PREF=W251bGwsIkNBSVNEQWlwM2ZPc0JoQ1FrWm13QWciXQ__; _ga=GA1.1.227433637.1704783527; SID=fAi3ME1qoAVp3WWOgrHyQd6SFmBkCl9edLWlAFTm9yTzIPuw6zXixzgKx8I-IRYRxEheiA.; __Secure-1PSID=fAi3ME1qoAVp3WWOgrHyQd6SFmBkCl9edLWlAFTm9yTzIPuwgbzNitE3za6hbwyheS_FPQ.; __Secure-3PSID=fAi3ME1qoAVp3WWOgrHyQd6SFmBkCl9edLWlAFTm9yTzIPuwGIABrkwi1Adt28gCBLcKTw.; AEC=Ae3NU9Mauigh2jELiazdCFSWhDcmL0ChGqGYMg4T1HLdWRapg9v0K_1oag; 1P_JAR=2024-01-11-01; OTZ=7377205_76_76_104100_72_446760; _ga_SYGF1G18MM=GS1.1.1704936314.3.0.1704936315.0.0.0; NID=511=J2p2L9i0lCjuzszZ6Rc4CDORTkAIPMWA0GDFyRtv2dlFtJtwmy_Suna_0cuLLkbkGbHXmGuGCyIprMx-j74BYm-CdqEl1Ckhfub0CWyE-BuQGGuI25c11WHYCac3sru9HxSdCm7yg8wlCrVevLguKx2uIAtX30LYv-lDh3W1Nfyruup2xZThikaj730FS5pDbXI8ch3u1P_5F1IZI652IpJrKKIRaTjGC2Q6OSOiSB0YfIlYN3GTZasXbhQjPf7lyomId1fvzI8xevdmKmLXwa-kTo3vR5to4niWSsQsmdlAyFWbJPVJFRopDsUtN5rBqVTfJzIcZxyfrsHhS1oIEjZ23ek0-pQXqWfcfy01hNBPizcFFKntjII3jfBgfjtrzbKO0-39wRY8GPn-7FktB89OmL4Kp_Jr8O1lhhTEPGHuXaFf8he9Gny8yYXl6q23Ak1uj4VrVYwCPAkO44kRCm2hZpJnIkVj4QNqllKEh2ZSiFjODf5t4ksMPwRk43wxpDV1v920JoapcsBsK-01TNus351Q09Y-KpBigOIK4ez0Pa7huz1Alkhht6sYBVdGLXC7mVK1IdpxsB9-ixkwZg2_FSIZ8aj0mNdveZXPUx81dTBoSEjsfoIwcIKjQketykTaeM4EMqzJ5Md6b4FGg2-duWLFJBeVMWHdP61ghOUal1XvjRGKO5L1UFqTC210ityefXCuMbMeXOhQg38Q8WDceHBszIak_Rl21iRGDH4m8olZ_f_ZCt6OmIPvqjoXTmcCi_TpFS6jm3D2hvA0zmqnXMXSVRddtxRfmQiEOQ4qY-BnTp3vjeOdfLAkAdTRidIg9_bkvE2gawgqUaMuI2savikY-kTXVY2FHXtQd3PnkxXwv2O-sCDlaBQ2jgBIpDNIJklEHco8d1Jl4wAj9x1-UdZWkjddn5Kcczt4bVlfYciqmtJw7Lp-4-24nII5kECZuT-oPs9dmuG330MFMpKLvjUXPiX2Z-PK-wEOJmAUyn9nqLlFR9dHcTC-dMSEF3HS_stLwPBhDmcIsH2WPlpqLjqs_iWsL507Hobbtf2mXw; __Secure-1PSIDTS=sidts-CjIBPVxjShncpCDh30nav9iKdTscy491iUyDaPCrQYxT4bVcC6rlATJUXScDxhbelohfOxAA; __Secure-3PSIDTS=sidts-CjIBPVxjShncpCDh30nav9iKdTscy491iUyDaPCrQYxT4bVcC6rlATJUXScDxhbelohfOxAA; SIDCC=ABTWhQEin-VyM5JrtgziHqVcw4vEkqKn8hz_Ak8mdUW0yMUGFElNF7BSBuJlSqNw_esxhZTyqdUu; __Secure-1PSIDCC=ABTWhQFKPjqta4w_Q1nawmXpUuS2oHlhkNvYFoHE4D2u_TfIqF0Si59p8-7fIM8mw-ucL5-CwfQ; __Secure-3PSIDCC=ABTWhQGwZZMlriobXZawp0zAdDE0TzHcqw7K0ZM8zvKJtQ4lrUZ0wR9ErsFQuwlUg2NHccTtoN7z',
+#         'Sec-Fetch-Dest':'document',
+#         'Sec-Fetch-Mode':'navigate',
+#         'Sec-Fetch-Site':'none',
+#         'Sec-Fetch-User':'?1',
+#         'Upgrade-Insecure-Requests':'1'}
+#     response = requests.get(url=news_url, headers=headers)
+#     response.text
 
-    root = ET.fromstring(response.text)
-    # Adjust the loop according to your XML structure
-    data = []
-    for item in root.findall('.//item'):
-        title = item.find('title').text
-        link = item.find('link').text
-        pubDate = item.find('pubDate').text
-        sourceUrl = item.find('source').get('url')
-        source = item.find('source').text
-        data.append({'title': title, 'link': link, 'pubDate': pubDate, 'sourceUrl':sourceUrl,'source':source})
-    news = pd.DataFrame(data)
+#     root = ET.fromstring(response.text)
+#     # Adjust the loop according to your XML structure
+#     data = []
+#     for item in root.findall('.//item'):
+#         title = item.find('title').text
+#         link = item.find('link').text
+#         pubDate = item.find('pubDate').text
+#         sourceUrl = item.find('source').get('url')
+#         source = item.find('source').text
+#         data.append({'title': title, 'link': link, 'pubDate': pubDate, 'sourceUrl':sourceUrl,'source':source})
+#     news = pd.DataFrame(data)
 
-    return news
+#     return news
 
 # def get_news(keyword):
 #     url = f"https://news.google.com/search?q={keyword}&hl=en-PH&gl=PH&ceid=PH:en"
