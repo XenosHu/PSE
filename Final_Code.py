@@ -23,6 +23,7 @@ from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 import langchain_community.agent_toolkits
+import xml.etree.ElementTree as ET
 
 
 
@@ -375,22 +376,24 @@ def get_news(selected_stock_name):
     selected_stock_name = selected_stock_name.translate(translator)
     selected_stock_name = selected_stock_name.replace(" ", "%20")
     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
-    feed = feedparser.parse(news_url)
-    news_items = []
+    headers = {
+            'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            'Content-Type': 'application/json'}
+    response = requests.get(url=news_url, headers=headers)
+    response.text
 
-    for entry in feed.entries:
-        source_url = entry.source.get('url') if entry.get('source') else 'Unknown Source'
-        sentiment = analyzer.polarity_scores(entry.title)
-        compound_score = sentiment['compound']  # Extract the compound score
-        news_items.append({
-            'title': entry.title,
-            'pub_date': entry.published,
-            'link': entry.link,
-            'source_url': source_url,  # Extract source URL from the source tag
-            'sentiment': compound_score
-        })
+    root = ET.fromstring(response.text)
+    # Adjust the loop according to your XML structure
+    data = []
+    for item in root.findall('.//item'):
+        title = item.find('title').text
+        link = item.find('link').text
+        pubDate = item.find('pubDate').text
+        sourceUrl = item.find('source').get('url')
+        source = item.find('source').text
+        data.append({'title': title, 'link': link, 'pubDate': pubDate, 'sourceUrl':sourceUrl,'source':source})
+    news = pd.DataFrame(data)
 
-    news = pd.DataFrame(news_items)
     return news
     
 st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
@@ -400,7 +403,7 @@ if not news.empty:
     # Display the most recent 5 news items
     for index, row in news.head(5).iterrows():
         st.markdown(f"[{row['title']}]({row['link']})")
-        st.write(f"Published Date: {row['pub_date']}")
+        st.write(f"Published Date: {row['pubDate']}")
         sentiment_score = row['sentiment']
         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
