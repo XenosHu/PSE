@@ -503,7 +503,7 @@ query = (
 # Generate the response using the OpenAI model from Langchain
 try:
     # Wrapping the query in a list
-    response = llm.generate([query], max_tokens=1000)["generations"][0]
+    response = llm.generate([query], max_tokens=1000)
     st.markdown("### AI Generated Summary")
     st.text_area("Summary:", response, height=600)
 except Exception as e:
