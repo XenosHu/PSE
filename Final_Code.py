@@ -18,6 +18,7 @@ import string
 import re
 import os
 import tempfile
+import OpenAI
 from langchain_community.llms import OpenAI
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
