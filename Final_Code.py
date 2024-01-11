@@ -427,21 +427,21 @@ embeddings = OpenAIEmbeddings()
 #     st.error("'link' column not found in news data.")
 
 # Check if URLs are available
-if fin_url and not news.empty:
-    # Combine URLs from the annual report and news articles
-    urls = [fin_url] + news['link'].tolist()
+# if fin_url and not news.empty:
+#     # Combine URLs from the annual report and news articles
+#     urls = [fin_url] + news['link'].tolist()
 
-    # Prepare the query for OpenAI model
-    query = (
-        "Access all the links of the news and generate a comprehensive report summary to: "
-        "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
-        "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
-        "3. In no more than 300 words, use a professional tone."
-    )
+#     # Prepare the query for OpenAI model
+#     query = (
+#         "Access all the links of the news and generate a comprehensive report summary to: "
+#         "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
+#         "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
+#         "3. In no more than 300 words, use a professional tone."
+#     )
 
-    # Analyze the URLs with the query using OpenAI model
-    response = llm.run(query, context=urls)
-    st.write(response)
+#     # Analyze the URLs with the query using OpenAI model
+#     response = llm.run(query, context=urls)
+#     st.write(response)
     
 #     # Attempt to download PDF for the past five years
 #     for year in range(current_year, current_year - 5, -1):  # Try the last five years
