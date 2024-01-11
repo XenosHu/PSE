@@ -416,16 +416,16 @@ api_key = st.secrets["OPENAI_API_KEY"]
 os.environ['OPENAI_API_KEY'] = api_key
 
 
-# # Create instance of OpenAI LLM
-# llm = OpenAI(temperature=0.1, verbose=True)
-# embeddings = OpenAIEmbeddings()
+# Create instance of OpenAI LLM
+llm = OpenAI(temperature=0.1, verbose=True)
+embeddings = OpenAIEmbeddings()
 
-# # User inputs ticker symbol
-# ticker_input = st.text_input("Enter Ticker Symbol:")
+# User inputs ticker symbol
+ticker_input = st.text_input("Enter Ticker Symbol:")
 
-# if ticker_input:
-#     current_year = datetime.now().year
-#     pdf_content = None
+if ticker_input:
+    current_year = datetime.now().year
+    pdf_content = None
 
 #     # Attempt to download PDF for the past five years
 #     for year in range(current_year, current_year - 5, -1):  # Try the last five years
