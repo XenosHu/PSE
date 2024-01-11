@@ -420,11 +420,6 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
-# Get the annual report URL
-fin_url = get_annual_report(selected_stock_name)
-
-# Get news articles related to the stock
-news = get_news(selected_stock_name)
 # Check if 'link' column exists
 if 'link' in news.columns:
     news['link'] = news['link'].astype(str)
