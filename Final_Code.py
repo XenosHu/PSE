@@ -24,6 +24,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 import langchain_community.agent_toolkits
 import xml.etree.ElementTree as ET
+from bs4 import BeautifulSoup
 
 
 
@@ -401,6 +402,24 @@ def get_news(selected_stock_name):
     news = pd.DataFrame(data)
 
     return news
+
+# def get_news(keyword):
+#     url = f"https://news.google.com/search?q={keyword}&hl=en-PH&gl=PH&ceid=PH:en"
+#     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
+#     headers = {
+#             'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+#             'Content-Type': 'application/json'}
+#     response = requests.get(url=url, headers=headers)
+#     res = response.text
+
+#     soup = BeautifulSoup(res, 'html.parser')
+#     article = soup.find_all('article')
+#     url_list = []
+#     for a in article:
+#         url = "https://news.google.com"+a.div.div.a.get('href')[1:]
+#         url_list.append(url)
+#     return url_list
+
     
 st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 news = get_news(selected_stock_name)
@@ -429,6 +448,8 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
+
+
 # # Check if 'link' column exists
 # if 'link' in news.columns:
 #     news['link'] = news['link'].astype(str)
@@ -438,19 +459,30 @@ embeddings = OpenAIEmbeddings()
 # Check if URLs are available
 # if fin_url and not news.empty:
 #     # Combine URLs from the annual report and news articles
-#     urls = [fin_url] + news['link'].tolist()
+# urls = [fin_url] + news['link'].tolist()
 
-#     # Prepare the query for OpenAI model
-#     query = (
-#         "Access all the links of the news and generate a comprehensive report summary to: "
-#         "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
-#         "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
-#         "3. In no more than 300 words, use a professional tone."
-#     )
+urls = ['https://news.google.com/articles/CBMidWh0dHBzOi8vd3d3LnBoaWxzdGFyLmNvbS9idXNpbmVzcy9zdG9jay1jb21tZW50YXJ5LzIwMjMvMTAvMzEvMjMwNzkyNC93aWxjb24tcmVwb3J0cy1xMy1uZXQtaW5jb21lLXA5MDgtbS1kb3duLTE3Ny15edIBAA?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMiTmh0dHBzOi8vbWIuY29tLnBoLzIwMjMvMTAvMjUvc3RvY2tzLXNsaWdodGx5LXJlY292ZXItYW1pZC0zLXEtZWFybmluZ3MtcmVsZWFzZdIBAA?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMicWh0dHBzOi8vd3d3LmJ3b3JsZG9ubGluZS5jb20vY29ycG9yYXRlLzIwMjMvMDcvMzEvNTM2Nzg1L3dlYWstZWFybmluZ3MtZGlzbWFsLW1hcmtldC1zZW50aW1lbnQtd2VpZ2gtZG93bi13aWxjb24v0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMiTWh0dHBzOi8vYnVzaW5lc3MuaW5xdWlyZXIubmV0LzMzMjEwOC93aWxjb24tZ2V0cy1pbnRvLXBzZWktcmVwbGFjZXMtZmlyc3QtZ2Vu0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMijgFodHRwczovL3d3dy5tYXJrZXRzY3JlZW5lci5jb20vcXVvdGUvc3RvY2svV0lMQ09OLURFUE9ULUlOQy00MjU5MTk1My9uZXdzL1dpbGNvbi1EZXBvdC1JbnRlZ3JhdGVkLUFubnVhbC1Db3Jwb3JhdGUtR292ZXJuYW5jZS1SZXBvcnQtNDA1NjA0Mzgv0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMiWGh0dHBzOi8vd3d3LnBoaWxzdGFyLmNvbS9idXNpbmVzcy8yMDIxLzEwLzA2LzIxMzIyMjUvd2lsY29uLWRlcG90LXJlcGxhY2UtZmlyc3QtZ2VuLXBzZWnSAV1odHRwczovL3d3dy5waGlsc3Rhci5jb20vYnVzaW5lc3MvMjAyMS8xMC8wNi8yMTMyMjI1L3dpbGNvbi1kZXBvdC1yZXBsYWNlLWZpcnN0LWdlbi1wc2VpL2FtcC8?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMiXWh0dHBzOi8vbmV3cy5hYnMtY2JuLmNvbS9idXNpbmVzcy8wNi8xOC8xOC93aWxjb24tc2F5cy1wcmljZXMtdXAtMi0zLXBlcmNlbnQtZHVlLXRvLXdlYWstcGVzb9IBAA?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMiQWh0dHBzOi8vYnVzaW5lc3MuaW5xdWlyZXIubmV0LzIyNzExNi93aWxjb24tZ2FpbnMtNS01LWlwby1saXN0aW5n0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMingFodHRwczovL3d3dy5waGlsc3Rhci5jb20vYnVzaW5lc3Mvc3RvY2stY29tbWVudGFyeS8yMDIyLzA2LzIxLzIxODk5MjAvY29zY28tY2FwaXRhbC1zaWducy1wNTAwLW0tam9pbnQtdmVudHVyZS1nZXQtY29uc3RydWN0aW9uLXN1cHBseS1hbmQtaG91c2V3YXJlcy1idXNpbmVzc9IBowFodHRwczovL3d3dy5waGlsc3Rhci5jb20vYnVzaW5lc3Mvc3RvY2stY29tbWVudGFyeS8yMDIyLzA2LzIxLzIxODk5MjAvY29zY28tY2FwaXRhbC1zaWducy1wNTAwLW0tam9pbnQtdmVudHVyZS1nZXQtY29uc3RydWN0aW9uLXN1cHBseS1hbmQtaG91c2V3YXJlcy1idXNpbmVzcy9hbXAv?hl=en-PH&gl=PH&ceid=PH%3Aen',
+ 'https://news.google.com/articles/CBMicWh0dHBzOi8vd3d3LnBoaWxzdGFyLmNvbS9idXNpbmVzcy9zdG9jay1jb21tZW50YXJ5LzIwMjEvMDcvMDgvMjExMTA1MC9pa2VhLXBoaWxpcHBpbmVzLWFwb2xvZ2l6ZXMtc2VydmVyLW1lbHRkb3du0gF2aHR0cHM6Ly93d3cucGhpbHN0YXIuY29tL2J1c2luZXNzL3N0b2NrLWNvbW1lbnRhcnkvMjAyMS8wNy8wOC8yMTExMDUwL2lrZWEtcGhpbGlwcGluZXMtYXBvbG9naXplcy1zZXJ2ZXItbWVsdGRvd24vYW1wLw?hl=en-PH&gl=PH&ceid=PH%3Aen']
 
-#     # Analyze the URLs with the query using OpenAI model
-#     response = llm.run(query, context=urls)
-#     st.write(response)
+# Prepare the query for OpenAI model
+query = (
+    "Access all the links of the news and generate a comprehensive report summary to: "
+    "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
+    "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
+    "3. In no more than 300 words, use a professional tone."
+)
+
+# Analyze the URLs with the query using OpenAI model
+response = llm.run(query, context=urls)
+st.write(response)
     
 #     # Attempt to download PDF for the past five years
 #     for year in range(current_year, current_year - 5, -1):  # Try the last five years
