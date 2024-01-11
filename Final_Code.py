@@ -436,8 +436,8 @@ if news_url!={}:
         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
         st.write("---")  # Separator
-    else:
-        st.write("No news found for the selected stock.")
+else:
+    st.write("No news found for the selected stock.")
 
     
 def get_rdcontent(ul):
