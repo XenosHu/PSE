@@ -421,20 +421,20 @@ if fin_url:
 #     return url_list
 
     
-st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
-news = get_news(selected_stock_name)
+# st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
+# news = get_news(selected_stock_name)
 
-if not news.empty:
-    # Display the most recent 5 news items
-    for index, row in news.head(5).iterrows():
-        st.markdown(f"[{row['title']}]({row['link']})")
-        st.write(f"Published Date: {row['pubDate']}")
-        sentiment_score = row['sentiment']
-        sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
-        st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
-        st.write("---")  # Separator
-else:
-    st.write("No news found for the selected stock.")
+# if not news.empty:
+#     # Display the most recent 5 news items
+#     for index, row in news.head(5).iterrows():
+#         st.markdown(f"[{row['title']}]({row['link']})")
+#         st.write(f"Published Date: {row['pubDate']}")
+#         sentiment_score = row['sentiment']
+#         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
+#         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
+#         st.write("---")  # Separator
+# else:
+#     st.write("No news found for the selected stock.")
     
 #-------------------------------------------------------------------------------------------------------------------------------
 
