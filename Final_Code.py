@@ -426,39 +426,36 @@ st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 news_url = get_googlenews(selected_stock_name)
 news_url_df = pd.DataFrame(news_url)
 
-st.write(news_url_df)
-
-# if not news_url_df.empty:
-#     # Display the most recent 5 news items
-#     for index, row in news_url_df.iterrows():
-#         st.markdown(f"[{row['name']}]({row['url']})")
-#         st.write(f"Published Date: {row['date']}")
-#         sentiment_score = row['sentiment']
-#         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
-#         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
-#         st.write("---")  # Separator
-# else:
-#     st.write("No news found for the selected stock.")
+if not news_url_df.empty:
+    # Display the most recent 5 news items
+    for index, row in news_url_df.iterrows():
+        st.markdown(f"[{row['name']}]({row['url']})")
+        st.write(f"Published Date: {row['date']}")
+        sentiment_score = row['sentiment']
+        sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
+        st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
+        st.write("---")  # Separator
+else:
+    st.write("No news found for the selected stock.")
     
+def get_rdcontent(ul):
+    content = []
+    headers = {
+                    'User-Agent': "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
+                    'Content-Type': 'application/json'}
+    for u in ul:
+        response = requests.get(url=u['url'], headers=headers)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            link = soup.find_all('a')[-1].get('href')
+            response1 = requests.get(url=link, headers=headers)
+            if response1.status_code == 200:
+                soup1 = BeautifulSoup(response1.text, 'html.parser')
+                content.append(soup1.find('body').text.replace("\n","").replace("\t","").replace("\r","")) if soup.find('body')!=None else ""
+        time.sleep(1)
+    return content
 
-# def get_rdcontent(ul):
-#     content = []
-#     headers = {
-#                     'User-Agent': "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
-#                     'Content-Type': 'application/json'}
-#     for u in ul:
-#         response = requests.get(url=u['url'], headers=headers)
-#         if response.status_code == 200:
-#             soup = BeautifulSoup(response.text, 'html.parser')
-#             link = soup.find_all('a')[-1].get('href')
-#             response1 = requests.get(url=link, headers=headers)
-#             if response1.status_code == 200:
-#                 soup1 = BeautifulSoup(response1.text, 'html.parser')
-#                 content.append(soup1.find('body').text.replace("\n","").replace("\t","").replace("\r","")) if soup.find('body')!=None else ""
-#         time.sleep(1)
-#     return content
-
-# content = get_rdcontent(news_url)
+content = get_rdcontent(news_url)
 
 
 # def get_news(keyword):
@@ -477,8 +474,6 @@ st.write(news_url_df)
 #         url = "https://news.google.com"+a.div.div.a.get('href')[1:]
 #         url_list.append(url)
 #     return url_list
-
-    
 
     
 #-------------------------------------------------------------------------------------------------------------------------------
