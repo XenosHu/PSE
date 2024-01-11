@@ -410,7 +410,6 @@ else:
     
 #-------------------------------------------------------------------------------------------------------------------------------
 
-
 # Use Streamlit's secrets for the API key
 api_key = st.secrets["OPENAI_API_KEY"]
 os.environ['OPENAI_API_KEY'] = api_key
@@ -422,7 +421,7 @@ embeddings = OpenAIEmbeddings()
 
 # Get the annual report URL
 fin_url = get_annual_report(selected_stock_name)
-fin_url = fin_url.astype(str)
+
 # Get news articles related to the stock
 news = get_news(selected_stock_name)
 news['link'] = new['link'].astype(str)
