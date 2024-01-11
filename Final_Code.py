@@ -487,7 +487,7 @@ api_key = st.secrets["OPENAI_API_KEY"]
 os.environ['OPENAI_API_KEY'] = api_key
 
 # Initialize OpenAI with the key
-openai.api_key = api_key
+OpenAI.api_key = api_key
 
 # Prepare the query for OpenAI model
 query = (
