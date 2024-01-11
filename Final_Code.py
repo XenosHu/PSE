@@ -18,7 +18,7 @@ import string
 import re
 import os
 import tempfile
-import OpenAI
+import openai
 from langchain_community.llms import OpenAI
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -488,7 +488,7 @@ api_key = st.secrets["OPENAI_API_KEY"]
 os.environ['OPENAI_API_KEY'] = api_key
 
 # Initialize OpenAI with the key
-OpenAI.api_key = api_key
+openai.api_key = api_key
 
 # Prepare the query for OpenAI model
 query = (
