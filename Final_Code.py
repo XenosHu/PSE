@@ -400,7 +400,7 @@ def get_googlenews(keyword):
     sorted_data = sorted(res_list, key=lambda x: x["date"], reverse=True)
     if len(sorted_data)>3:
         return sorted_data[:3]
-    else
+    else:
         return sorted_data
 
 st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
