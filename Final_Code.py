@@ -421,12 +421,36 @@ llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
 # User inputs ticker symbol
-ticker_input = st.text_input("Enter Ticker Symbol:")
+# ticker_input = st.text_input("Enter Ticker Symbol:")
 
-if ticker_input:
-    current_year = datetime.now().year
-    pdf_content = None
+# Get the annual report URL
+fin_url = get_annual_report(selected_stock_name)
 
+# Get news articles related to the stock
+news = get_news(selected_stock_name)
+
+# if ticker_input:
+#     current_year = datetime.now().year
+#     if fin_url:
+#         if not news.empty:
+
+# Check if URLs are available
+if fin_url and not news.empty:
+    # Combine URLs from the annual report and news articles
+    urls = [fin_url] + news['link'].tolist()
+
+    # Prepare the query for OpenAI model
+    query = (
+        "Access all the links of the news and generate a comprehensive report summary to: "
+        "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
+        "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
+        "3. In no more than 300 words, use a professional tone."
+    )
+
+    # Analyze the URLs with the query using OpenAI model
+    response = llm.run(query, context=urls)
+    st.write(response)
+    
 #     # Attempt to download PDF for the past five years
 #     for year in range(current_year, current_year - 5, -1):  # Try the last five years
 #         pdf_content = download_pdf(ticker_input, year)
@@ -464,9 +488,5 @@ if ticker_input:
 
 #         response = agent_executor.run(default_query)
 #         st.write(response)
-
-#         with st.expander('Document Similarity Search'):
-#             search = store.similarity_search_with_score(default_query)
-#             st.write(search[0][0].page_content)
 
 
