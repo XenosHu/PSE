@@ -384,7 +384,7 @@ def get_news(selected_stock_name):
         'Sec-Fetch-Mode':'navigate',
         'Sec-Fetch-Site':'none',
         'Sec-Fetch-User':'?1',
-        'Upgrade-Insecure-Requests':1}
+        'Upgrade-Insecure-Requests':'1'}
     response = requests.get(url=news_url, headers=headers)
     response.text
 
