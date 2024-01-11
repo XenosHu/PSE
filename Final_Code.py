@@ -304,7 +304,7 @@ elif indicator_type == 'ema':
 #-------------------------------------------------------------------------------------------------------------------------------
 
 def get_annual_report(keyword):
-    words = re.split(r'\W+', keyword)
+    words = re.split(r'[^\w-]+', keyword)
     if len(words) >= 2:
         # Join the first two words with '%20' for URL encoding
         modified_keyword = "%20".join(words[:2])
