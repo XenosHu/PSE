@@ -28,7 +28,6 @@ from bs4 import BeautifulSoup
 import time
 
 
-
 raw = pd.read_csv("PSE_info.csv")
 pse_tickers = raw['symbol'].tolist()
 
@@ -458,8 +457,6 @@ def get_rdcontent(ul):
         time.sleep(1)
     return content
 
-content = get_rdcontent(news_url)
-
 
 # def get_news(keyword):
 #     url = f"https://news.google.com/search?q={keyword}&hl=en-PH&gl=PH&ceid=PH:en"
@@ -481,41 +478,36 @@ content = get_rdcontent(news_url)
     
 #-------------------------------------------------------------------------------------------------------------------------------
 
+# Fetch the content from the news URLs
+content = get_rdcontent(news['link'].tolist())
+combined_content = ' '.join(content)  # Join all contents into a single string
 
 # Use Streamlit's secrets for the API key
 api_key = st.secrets["OPENAI_API_KEY"]
 os.environ['OPENAI_API_KEY'] = api_key
 
+# Initialize OpenAI with the key
+openai.api_key = api_key
 
-# Create instance of OpenAI LLM
-llm = OpenAI(temperature=0.1, verbose=True)
-embeddings = OpenAIEmbeddings()
+# Prepare the query for OpenAI model
+query = (
+    "Analyze the following text and generate a comprehensive report summary: "
+    f"{combined_content} "
+    "Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
+    "In conclusion, recommend to the investor to invest or not to invest in this stock. "
+    "Provide the summary in no more than 300 words, using a clear and professional tone."
+)
 
-
-# if fin_url and not news.empty:
-#     # Combine URLs from the annual report and news articles
-# urls = [fin_url] + news['link'].tolist()
-
-# # Prepare the query for OpenAI model
-# query = (
-#     "Access all the txt of the news and generate a comprehensive report summary to: "
-#     "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
-#     "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
-#     "3. In no more than 300 words, use a professional tone."
-# )
-# # Generate the response using OpenAI's GPT model
-# try:
-#     response = openai.Completion.create(
-#         engine="davinci", 
-#         prompt=query, 
-#         max_tokens=500
-#     )
-#     st.write(response.choices[0].text)
-# except Exception as e:
-#     st.error(f"Error: {e}")
-
-
-
+# Generate the response using OpenAI's GPT model
+try:
+    response = openai.Completion.create(
+        engine="davinci",
+        prompt=query,
+        max_tokens=1000  # Increased max tokens for a comprehensive summary
+    )
+    st.write(response.choices[0].text)
+except Exception as e:
+    st.error(f"Error: {e}")
 
 
 
