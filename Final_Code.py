@@ -479,18 +479,18 @@ def get_rdcontent(ul):
     
 #-------------------------------------------------------------------------------------------------------------------------------
 
+
+api_key = st.secrets["OPENAI_API_KEY"]
+os.environ['OPENAI_API_KEY'] = api_key
+
+# Initialize the OpenAI model from Langchain
+llm = OpenAI(api_key=api_key, temperature=0.1)
+
 # Fetch the content from the news URLs
 content = get_rdcontent(news_url)
 combined_content = ' '.join(content)  # Join all contents into a single string
 
-# Use Streamlit's secrets for the API key
-api_key = st.secrets["OPENAI_API_KEY"]
-os.environ['OPENAI_API_KEY'] = api_key
-
-# Initialize OpenAI with the key
-openai.api_key = api_key
-
-# Prepare the query for OpenAI model
+# Prepare the query for the model
 query = (
     "Analyze the following text and generate a comprehensive report summary: "
     f"{combined_content} "
@@ -499,14 +499,10 @@ query = (
     "Provide the summary in no more than 300 words, using a clear and professional tone."
 )
 
-# Generate the response using OpenAI's GPT model
+# Generate the response using the OpenAI model from Langchain
 try:
-    response = openai.Completion.create(
-        engine="davinci",
-        prompt=query,
-        max_tokens=1000  # Increased max tokens for a comprehensive summary
-    )
-    st.write(response.choices[0].text)
+    response = llm.generate(query, max_tokens=1000)  # Adjusted method to 'generate'
+    st.write(response)
 except Exception as e:
     st.error(f"Error: {e}")
 
