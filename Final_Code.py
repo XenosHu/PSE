@@ -407,17 +407,19 @@ st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 news_url = get_googlenews("selected_stock_name")
 news_url_df = pd.DataFrame(news_url)
 
-if not news_url_df.empty:
-    # Display the most recent 5 news items
-    for index, row in news_url_df.iterrows():
-        st.markdown(f"[{row['name']}]({row['url']})")
-        st.write(f"Published Date: {row['date']}")
-        sentiment_score = row['sentiment']
-        sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
-        st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
-        st.write("---")  # Separator
-else:
-    st.write("No news found for the selected stock.")
+st.write(news_url_df)
+
+# if not news_url_df.empty:
+#     # Display the most recent 5 news items
+#     for index, row in news_url_df.iterrows():
+#         st.markdown(f"[{row['name']}]({row['url']})")
+#         st.write(f"Published Date: {row['date']}")
+#         sentiment_score = row['sentiment']
+#         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
+#         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
+#         st.write("---")  # Separator
+# else:
+#     st.write("No news found for the selected stock.")
     
 
 # def get_rdcontent(ul):
