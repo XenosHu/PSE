@@ -413,7 +413,7 @@ def get_googlenews(keyword):
         res_list.append({
             "name":name,
             "url":url,
-            "date":date
+            "date":date,
             "sentiment": sentiment['compound'] 
         })
 
