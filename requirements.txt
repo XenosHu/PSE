@@ -12,3 +12,4 @@ nltk>=3.6.3
 vaderSentiment>=3.3.2
 feedparser
 langchain-community
+openai
