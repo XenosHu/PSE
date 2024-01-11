@@ -433,7 +433,7 @@ if news_url!={}:
         print(d)
         st.markdown(f"[{d['name']}]({d['url']})")
         st.write(f"Published Date: {d['date']}")
-        sentiment_score = row['sentiment']
+        sentiment_score = d['sentiment']
         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
         st.write("---")  # Separator
