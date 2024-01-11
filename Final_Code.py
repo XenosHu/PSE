@@ -429,8 +429,8 @@ st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 news_url = get_googlenews(selected_stock_name)
 news_url_df = pd.DataFrame(news_url)
 if news_url!={}:
-    for d in news_url:
-        print(d)
+    st.write(len(news_url))
+    for d in news_url:   
         st.markdown(f"[{d['name']}]({d['url']})")
         st.write(f"Published Date: {d['date']}")
         sentiment_score = d['sentiment']
