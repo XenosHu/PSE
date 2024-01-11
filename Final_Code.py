@@ -369,7 +369,25 @@ if fin_url:
 
 #-------------------------------------------------------------------------------------------------------------------------------
 
-# analyzer = SentimentIntensityAnalyzer()
+analyzer = SentimentIntensityAnalyzer()
+
+def parse_and_format_date(date_str):
+    # Extract the year if available
+    year_match = re.search(r', (\d{4})', date_str)
+    year = year_match.group(1) if year_match else str(datetime.now().year-1)
+
+    # Remove the year part from the date string
+    date_str = re.sub(r', \d{4}', '', date_str)
+
+    # Convert the month abbreviation to a numerical month
+    datetime_obj = datetime.strptime(date_str, "%b %d")
+
+    # Set the year
+    datetime_obj = datetime_obj.replace(year=int(year))
+
+    # Format the date as 'YYYY-MM-DD' for sorting
+    return datetime_obj.strftime("%Y-%m-%d")
+
 
 def get_googlenews(keyword):
     url = f"https://news.google.com/search?q={keyword}&hl=en-PH&gl=PH&ceid=PH:en"
