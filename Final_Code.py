@@ -499,9 +499,11 @@ query = (
     "Provide the summary in no more than 300 words, using a clear and professional tone."
 )
 
+
 # Generate the response using the OpenAI model from Langchain
 try:
-    response = llm.generate(query, max_tokens=1000)  # Adjusted method to 'generate'
+    # Wrapping the query in a list
+    response = llm.generate([query], max_tokens=1000)
     st.write(response)
 except Exception as e:
     st.error(f"Error: {e}")
