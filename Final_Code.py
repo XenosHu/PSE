@@ -479,7 +479,7 @@ def get_rdcontent(ul):
 #-------------------------------------------------------------------------------------------------------------------------------
 
 # Fetch the content from the news URLs
-content = get_rdcontent(news['link'].tolist())
+content = get_rdcontent(news_url_df['link'].tolist())
 combined_content = ' '.join(content)  # Join all contents into a single string
 
 # Use Streamlit's secrets for the API key
