@@ -420,11 +420,11 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
-# Check if 'link' column exists
-if 'link' in news.columns:
-    news['link'] = news['link'].astype(str)
-else:
-    st.error("'link' column not found in news data.")
+# # Check if 'link' column exists
+# if 'link' in news.columns:
+#     news['link'] = news['link'].astype(str)
+# else:
+#     st.error("'link' column not found in news data.")
 
 # Check if URLs are available
 if fin_url and not news.empty:
