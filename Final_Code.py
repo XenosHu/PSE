@@ -472,47 +472,34 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# # Check if 'link' column exists
-# if 'link' in news.columns:
-#     news['link'] = news['link'].astype(str)
-# else:
-#     st.error("'link' column not found in news data.")
-
-# Check if URLs are available
 # if fin_url and not news.empty:
 #     # Combine URLs from the annual report and news articles
 # urls = [fin_url] + news['link'].tolist()
 
-urls = ['https://news.google.com/articles/CBMidWh0dHBzOi8vd3d3LnBoaWxzdGFyLmNvbS9idXNpbmVzcy9zdG9jay1jb21tZW50YXJ5LzIwMjMvMTAvMzEvMjMwNzkyNC93aWxjb24tcmVwb3J0cy1xMy1uZXQtaW5jb21lLXA5MDgtbS1kb3duLTE3Ny15edIBAA?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMiTmh0dHBzOi8vbWIuY29tLnBoLzIwMjMvMTAvMjUvc3RvY2tzLXNsaWdodGx5LXJlY292ZXItYW1pZC0zLXEtZWFybmluZ3MtcmVsZWFzZdIBAA?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMicWh0dHBzOi8vd3d3LmJ3b3JsZG9ubGluZS5jb20vY29ycG9yYXRlLzIwMjMvMDcvMzEvNTM2Nzg1L3dlYWstZWFybmluZ3MtZGlzbWFsLW1hcmtldC1zZW50aW1lbnQtd2VpZ2gtZG93bi13aWxjb24v0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMiTWh0dHBzOi8vYnVzaW5lc3MuaW5xdWlyZXIubmV0LzMzMjEwOC93aWxjb24tZ2V0cy1pbnRvLXBzZWktcmVwbGFjZXMtZmlyc3QtZ2Vu0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMijgFodHRwczovL3d3dy5tYXJrZXRzY3JlZW5lci5jb20vcXVvdGUvc3RvY2svV0lMQ09OLURFUE9ULUlOQy00MjU5MTk1My9uZXdzL1dpbGNvbi1EZXBvdC1JbnRlZ3JhdGVkLUFubnVhbC1Db3Jwb3JhdGUtR292ZXJuYW5jZS1SZXBvcnQtNDA1NjA0Mzgv0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMiWGh0dHBzOi8vd3d3LnBoaWxzdGFyLmNvbS9idXNpbmVzcy8yMDIxLzEwLzA2LzIxMzIyMjUvd2lsY29uLWRlcG90LXJlcGxhY2UtZmlyc3QtZ2VuLXBzZWnSAV1odHRwczovL3d3dy5waGlsc3Rhci5jb20vYnVzaW5lc3MvMjAyMS8xMC8wNi8yMTMyMjI1L3dpbGNvbi1kZXBvdC1yZXBsYWNlLWZpcnN0LWdlbi1wc2VpL2FtcC8?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMiXWh0dHBzOi8vbmV3cy5hYnMtY2JuLmNvbS9idXNpbmVzcy8wNi8xOC8xOC93aWxjb24tc2F5cy1wcmljZXMtdXAtMi0zLXBlcmNlbnQtZHVlLXRvLXdlYWstcGVzb9IBAA?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMiQWh0dHBzOi8vYnVzaW5lc3MuaW5xdWlyZXIubmV0LzIyNzExNi93aWxjb24tZ2FpbnMtNS01LWlwby1saXN0aW5n0gEA?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMingFodHRwczovL3d3dy5waGlsc3Rhci5jb20vYnVzaW5lc3Mvc3RvY2stY29tbWVudGFyeS8yMDIyLzA2LzIxLzIxODk5MjAvY29zY28tY2FwaXRhbC1zaWducy1wNTAwLW0tam9pbnQtdmVudHVyZS1nZXQtY29uc3RydWN0aW9uLXN1cHBseS1hbmQtaG91c2V3YXJlcy1idXNpbmVzc9IBowFodHRwczovL3d3dy5waGlsc3Rhci5jb20vYnVzaW5lc3Mvc3RvY2stY29tbWVudGFyeS8yMDIyLzA2LzIxLzIxODk5MjAvY29zY28tY2FwaXRhbC1zaWducy1wNTAwLW0tam9pbnQtdmVudHVyZS1nZXQtY29uc3RydWN0aW9uLXN1cHBseS1hbmQtaG91c2V3YXJlcy1idXNpbmVzcy9hbXAv?hl=en-PH&gl=PH&ceid=PH%3Aen',
- 'https://news.google.com/articles/CBMicWh0dHBzOi8vd3d3LnBoaWxzdGFyLmNvbS9idXNpbmVzcy9zdG9jay1jb21tZW50YXJ5LzIwMjEvMDcvMDgvMjExMTA1MC9pa2VhLXBoaWxpcHBpbmVzLWFwb2xvZ2l6ZXMtc2VydmVyLW1lbHRkb3du0gF2aHR0cHM6Ly93d3cucGhpbHN0YXIuY29tL2J1c2luZXNzL3N0b2NrLWNvbW1lbnRhcnkvMjAyMS8wNy8wOC8yMTExMDUwL2lrZWEtcGhpbGlwcGluZXMtYXBvbG9naXplcy1zZXJ2ZXItbWVsdGRvd24vYW1wLw?hl=en-PH&gl=PH&ceid=PH%3Aen']
+# # Prepare the query for OpenAI model
+# query = (
+#     "Access all the txt of the news and generate a comprehensive report summary to: "
+#     "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
+#     "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
+#     "3. In no more than 300 words, use a professional tone."
+# )
+# # Generate the response using OpenAI's GPT model
+# try:
+#     response = openai.Completion.create(
+#         engine="davinci", 
+#         prompt=query, 
+#         max_tokens=500
+#     )
+#     st.write(response.choices[0].text)
+# except Exception as e:
+#     st.error(f"Error: {e}")
 
-# Prepare the query for OpenAI model
-query = (
-    "Access all the links of the news and generate a comprehensive report summary to: "
-    "1. Summarize the highlights and insights based on the given materials and the recent challenges or achievements the company faces. "
-    "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
-    "3. In no more than 300 words, use a professional tone."
-)
-# Generate the response using OpenAI's GPT model
-try:
-    response = openai.Completion.create(
-        engine="davinci", 
-        prompt=query, 
-        max_tokens=500
-    )
-    st.write(response.choices[0].text)
-except Exception as e:
-    st.error(f"Error: {e}")
+
+
+
+
+
 #     # Attempt to download PDF for the past five years
 #     for year in range(current_year, current_year - 5, -1):  # Try the last five years
 #         pdf_content = download_pdf(ticker_input, year)
