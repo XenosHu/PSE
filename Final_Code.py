@@ -420,19 +420,12 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
-# User inputs ticker symbol
-# ticker_input = st.text_input("Enter Ticker Symbol:")
-
 # Get the annual report URL
 fin_url = get_annual_report(selected_stock_name)
-
+fin_url = fin_url.astype(str)
 # Get news articles related to the stock
 news = get_news(selected_stock_name)
-
-# if ticker_input:
-#     current_year = datetime.now().year
-#     if fin_url:
-#         if not news.empty:
+news['link'] = new['link'].astype(str)
 
 # Check if URLs are available
 if fin_url and not news.empty:
