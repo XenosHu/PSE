@@ -22,11 +22,6 @@ from langchain_community.llms import OpenAI
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
-# from langchain_community.agent_toolkits import (
-#     create_vectorstore_agent,
-#     VectorStoreToolkit,
-#     VectorStoreInfo
-# )
 import langchain_community.agent_toolkits
 
 
@@ -364,9 +359,11 @@ def get_annual_report(keyword):
     return res_url
 
 
-fin_url = get_annual_report(selected_stock_name)
+
 st.subheader(f"{selected_stock_name} ({selected_stock})Most Recent Financial Report")
-st.markdown(f"[{selected_stock_name} Link to the report]({fin_url})")
+fin_url = get_annual_report(selected_stock_name)
+if fin_url:
+    st.markdown(f"[{selected_stock_name} Link to the report]({fin_url})")
 
 #-------------------------------------------------------------------------------------------------------------------------------
 
@@ -414,9 +411,10 @@ else:
 #-------------------------------------------------------------------------------------------------------------------------------
 
 
-# # Use Streamlit's secrets for the API key
-# api_key = st.secrets["OPENAI_API_KEY"]
-# os.environ['OPENAI_API_KEY'] = api_key
+# Use Streamlit's secrets for the API key
+api_key = st.secrets["OPENAI_API_KEY"]
+os.environ['OPENAI_API_KEY'] = api_key
+
 
 # # Create instance of OpenAI LLM
 # llm = OpenAI(temperature=0.1, verbose=True)
