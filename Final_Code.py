@@ -419,8 +419,8 @@ def get_googlenews(keyword):
         })
 
     sorted_data = sorted(res_list, key=lambda x: x["date"], reverse=True)
-    if len(sorted_data)>3:
-        return sorted_data[:3]
+    if len(sorted_data)>4:
+        return sorted_data[:4]
     else:
         return sorted_data
 
@@ -430,7 +430,7 @@ news_url = get_googlenews(selected_stock_name)
 news_url_df = pd.DataFrame(news_url)
 if news_url!={}:
     for d in news_url:   
-        st.markdown(f"Link: [{d['name']}]({d['url']})")
+        st.markdown(f"[{d['name']}]({d['url']})")
         st.write(f"Published Date: {d['date']}")
         sentiment_score = d['sentiment']
         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
