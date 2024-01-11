@@ -409,10 +409,12 @@ def get_googlenews(keyword):
         name = elist[0].text
         date = parse_and_format_date(elist[1].next.text)
         url = "https://news.google.com"+elist[0].a.get('href')[1:]
+        sentiment = analyzer.polarity_scores(name)
         res_list.append({
             "name":name,
             "url":url,
             "date":date
+            "sentiment": sentiment['compound'] 
         })
 
     sorted_data = sorted(res_list, key=lambda x: x["date"], reverse=True)
