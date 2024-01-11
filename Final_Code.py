@@ -430,7 +430,6 @@ if 'link' in news.columns:
     news['link'] = news['link'].astype(str)
 else:
     st.error("'link' column not found in news data.")
-    return pd.DataFrame()
 
 # Check if URLs are available
 if fin_url and not news.empty:
