@@ -504,9 +504,15 @@ query = (
 try:
     # Wrapping the query in a list
     response = llm.generate([query], max_tokens=1000)
-    st.write(response)
+    # Clean the text
+    cleaned_output = response.strip()  # Removes extra spaces and newlines
+    
+    # Use markdown for better formatting
+    st.markdown("### AI Generated Summary")
+    st.text_area("Summary:", cleaned_output, height=300)
 except Exception as e:
     st.error(f"Error: {e}")
+
 
 
 
