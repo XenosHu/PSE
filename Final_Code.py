@@ -428,17 +428,17 @@ st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 
 def display_data(sorted_data):
     news_url = get_googlenews(sorted_data)
-    st.write(pd.DataFrame(news_url))
-    if news_url!={}:
-        for d in news_url:   
-            st.markdown(f"[{d['name']}]({d['url']})")
-            st.write(f"Published Date: {d['date']}")
-            sentiment_score = d['sentiment']
-            sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
-            st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
-            st.write("---")  # Separator
-    else:
-        st.write("No news found for the selected stock.")
+    # st.write(pd.DataFrame(news_url))
+    # if news_url!={}:
+    #     for d in news_url:   
+    #         st.markdown(f"[{d['name']}]({d['url']})")
+    #         st.write(f"Published Date: {d['date']}")
+    #         sentiment_score = d['sentiment']
+    #         sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
+    #         st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
+    #         st.write("---")  # Separator
+    # else:
+    #     st.write("No news found for the selected stock.")
     return news_url
 
     
