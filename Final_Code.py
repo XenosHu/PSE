@@ -304,12 +304,13 @@ elif indicator_type == 'ema':
 #-------------------------------------------------------------------------------------------------------------------------------
 
 def get_annual_report(keyword):
-    # Split the keyword and take the first two words
-    words = keyword.split()
+    words = re.split(r'\W+', keyword)
     if len(words) >= 2:
-        modified_keyword = "%20".join(words[:2])  # Join the first two words with '%20' for URL encoding
+        # Join the first two words with '%20' for URL encoding
+        modified_keyword = "%20".join(words[:2])
     else:
-        modified_keyword = "%20".join(words)  # Use the whole keyword if it's less than two words
+        # Use the whole keyword if it's less than two words
+        modified_keyword = "%20".join(words)
 
     headers_getid = {
         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
