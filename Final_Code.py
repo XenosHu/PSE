@@ -427,7 +427,7 @@ st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 
 def display_data(sorted_data):
     news_url = get_googlenews(sorted_data)
-    st.write(pd.DataFrame(news_url))
+    # st.write(pd.DataFrame(news_url))
     if news_url!={}:
         for d in news_url:   
             st.markdown(f"[{d['name']}]({d['url']})")
