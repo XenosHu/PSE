@@ -426,10 +426,10 @@ def get_googlenews(keyword):
 
 st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 
-news_url = get_googlenews(selected_stock_name)
-news_url_df = pd.DataFrame(news_url)
+news_url = [get_googlenews(selected_stock_name)]
+news_url_df = pd.DataFrame(news_url[0])
 if news_url!={}:
-    for d in news_url:   
+    for d in news_url[0]:   
         st.markdown(f"[{d['name']}]({d['url']})")
         st.write(f"Published Date: {d['date']}")
         sentiment_score = d['sentiment']
@@ -486,7 +486,7 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(api_key=api_key, temperature=0.1)
 
 # Fetch the content from the news URLs
-content = get_rdcontent(news_url)
+content = get_rdcontent(news_url[0])
 # combined_content = ' '.join(content)  # Join all contents into a single string
 
 # Summarizing each article separately
