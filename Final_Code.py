@@ -410,6 +410,7 @@ else:
     
 #-------------------------------------------------------------------------------------------------------------------------------
 
+
 # Use Streamlit's secrets for the API key
 api_key = st.secrets["OPENAI_API_KEY"]
 os.environ['OPENAI_API_KEY'] = api_key
@@ -424,7 +425,12 @@ fin_url = get_annual_report(selected_stock_name)
 
 # Get news articles related to the stock
 news = get_news(selected_stock_name)
-news['link'] = news['link'].astype(str)
+# Check if 'link' column exists
+if 'link' in news.columns:
+    news['link'] = news['link'].astype(str)
+else:
+    st.error("'link' column not found in news data.")
+    return pd.DataFrame()
 
 # Check if URLs are available
 if fin_url and not news.empty:
