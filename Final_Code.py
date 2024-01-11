@@ -448,7 +448,7 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
-
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # # Check if 'link' column exists
 # if 'link' in news.columns:
@@ -479,11 +479,16 @@ query = (
     "2. In conclusion, recommend to the investor to invest or not to invest in this stock. "
     "3. In no more than 300 words, use a professional tone."
 )
-
-# Analyze the URLs with the query using OpenAI model
-response = llm.run(query, context=urls)
-st.write(response)
-    
+# Generate the response using OpenAI's GPT model
+try:
+    response = openai.Completion.create(
+        engine="davinci", 
+        prompt=query, 
+        max_tokens=500
+    )
+    st.write(response.choices[0].text)
+except Exception as e:
+    st.error(f"Error: {e}")
 #     # Attempt to download PDF for the past five years
 #     for year in range(current_year, current_year - 5, -1):  # Try the last five years
 #         pdf_content = download_pdf(ticker_input, year)
