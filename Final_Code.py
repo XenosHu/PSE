@@ -349,15 +349,15 @@ def get_annual_report(keyword):
         
     edge_no = match.group(1)
     res_url = f"https://edge.pse.com.ph/openDiscViewer.do?edge_no={edge_no}"
-    response = requests.get(url=res_url, headers=headers_getedge_no)
-    pattern1 = r'<iframe src="([^"]+)" id=\"viewContents\"'
-    match = re.search(pattern1, res)
+    # response = requests.get(url=res_url, headers=headers_getedge_no)
+    # pattern1 = r'<iframe src="([^"]+)" id=\"viewContents\"'
+    # match = re.search(pattern1, res)
 
-    if not match:
-        st.error("Failed to update the annual report link.")
-        return None
+    # if not match:
+    #     st.error("Failed to update the annual report link.")
+    #     return None
             
-    download_idurl = match.group(1)
+    # download_idurl = match.group(1)
     res_url = f"https://edge.pse.com.ph{download_idurl}"
     return res_url
 
