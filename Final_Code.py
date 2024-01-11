@@ -424,7 +424,7 @@ fin_url = get_annual_report(selected_stock_name)
 
 # Get news articles related to the stock
 news = get_news(selected_stock_name)
-news['link'] = new['link'].astype(str)
+news['link'] = news['link'].astype(str)
 
 # Check if URLs are available
 if fin_url and not news.empty:
