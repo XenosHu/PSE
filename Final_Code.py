@@ -410,16 +410,22 @@ def get_googlenews(keyword):
         for element in a.find_all('div'):
             if element.parent is a:
                 elist.append(element)
-        name = elist[0].text
-        date = parse_and_format_date(elist[1].next.text)
-        url = "https://news.google.com"+elist[0].a.get('href')[1:]
-        sentiment = analyzer.polarity_scores(name)
-        res_list.append({
-            "name":name,
-            "url":url,
-            "date":date,
-            "sentiment": sentiment['compound'] 
-        })
+        
+        if len(elist) >= 2:  # Check if there are at least two elements in elist
+            name = elist[0].text
+            date_text = elist[1].next.text
+            date = parse_and_format_date(date_text)
+            url = "https://news.google.com" + elist[0].a.get('href')[1:]
+            sentiment = analyzer.polarity_scores(name)
+            
+            # Check if date is not '2000-01-01' before appending
+            if date != '2000-01-01':
+                res_list.append({
+                    "name": name,
+                    "url": url,
+                    "date": date,
+                    "sentiment": sentiment['compound'] 
+                })
 
     sorted_data = sorted(res_list, key=lambda x: x["date"], reverse=True)
     if len(sorted_data)>3:
