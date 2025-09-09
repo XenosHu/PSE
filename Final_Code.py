@@ -27,7 +27,7 @@ import langchain_community.agent_toolkits
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 import time
-
+from urllib.parse import urljoin
 
 raw = pd.read_csv("PSE_info.csv")
 pse_tickers = raw['symbol'].tolist()
@@ -540,7 +540,9 @@ os.environ['OPENAI_API_KEY'] = api_key
 llm = OpenAI(api_key=api_key, temperature=0.1)
 
 # Fetch the content from the news URLs
-content = get_rdcontent(display_data(selected_stock_name))
+items = display_data(selected_stock_name) or []
+content = get_rdcontent(items)
+
 # combined_content = ' '.join(content)  # Join all contents into a single string
 
 # Summarizing each article separately
