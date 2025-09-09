@@ -435,40 +435,83 @@ def get_googlenews(keyword):
 
 st.subheader(f"{selected_stock_name}({selected_stock}) Top News")
 
-def display_data(sorted_data):
-    news_url = get_googlenews(sorted_data)
-    # st.write(pd.DataFrame(news_url))
-    if news_url!={}:
-        for d in news_url:   
+def display_data(keyword):
+    news_url = get_googlenews(keyword)
+    if news_url:     # ✅ 代替原来的 if news_url != {}
+        for d in news_url:
             st.markdown(f"[{d['name']}]({d['url']})")
             st.write(f"Published Date: {d['date']}")
             sentiment_score = d['sentiment']
             sentiment_color = "green" if sentiment_score > 0 else "red" if sentiment_score < 0 else "grey"
             st.write("Sentiment Score:", f"<font color='{sentiment_color}'>{sentiment_score}</font>", unsafe_allow_html=True)
-            st.write("---")  # Separator
+            st.write("---")
     else:
         st.write("No news found for the selected stock.")
     return news_url
 
-    
-def get_rdcontent(ul):
+def get_rdcontent(items):
     content = []
     headers = {
-                    'User-Agent': "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
-                    'Content-Type': 'application/json'}
-    for u in ul:
-        response = requests.get(url=u['url'], headers=headers)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            link = soup.find_all('a')[-1].get('href')
-            response1 = requests.get(url=link, headers=headers)
-            if response1.status_code == 200:
-                soup1 = BeautifulSoup(response1.text, 'html.parser')
-                content.append(soup1.find('body').text.replace("\n","").replace("\t","").replace("\r","")) if soup.find('body')!=None else ""
-        time.sleep(1)
+        'User-Agent': "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
+        'Content-Type': 'application/json'
+    }
+    for it in items:
+        try:
+            # 1) 直接请求 Google News 提供的链接，允许跳转
+            r = requests.get(it['url'], headers=headers, timeout=15, allow_redirects=True)
+            if r.status_code != 200:
+                continue
+            soup = BeautifulSoup(r.text, 'html.parser')
+
+            # 2) 优先从 canonical / og:url / meta refresh 找到最终新闻链接
+            final_url = None
+            
+            canon = soup.find('link', rel='canonical')
+            if canon and canon.get('href'):
+                final_url = canon['href']
+
+            if not final_url:
+                og = soup.find('meta', property='og:url')
+                if og and og.get('content'):
+                    final_url = og['content']
+
+            if not final_url:
+                refresh = soup.find('meta', attrs={'http-equiv': 'refresh'})
+                if refresh and 'url=' in (refresh.get('content','').lower()):
+                    final_url = refresh['content'].split('url=', 1)[-1].strip()
+
+            # 3) 最后再降级用页面中的 <a>（如果存在）
+            if not final_url:
+                anchors = soup.find_all('a')
+                if anchors:
+                    final_url = anchors[-1].get('href')
+
+            if not final_url:
+                # 实在拿不到就跳过该条
+                continue
+
+            # 处理相对链接
+            final_url = urljoin(it['url'], final_url)
+
+            # 4) 请求真正新闻页并抽正文
+            r2 = requests.get(final_url, headers=headers, timeout=15, allow_redirects=True)
+            if r2.status_code != 200:
+                continue
+
+            soup1 = BeautifulSoup(r2.text, 'html.parser')
+            body = soup1.find('body')
+            if body:
+                text = body.get_text(" ", strip=True)
+                if text:
+                    content.append(text)
+
+            time.sleep(1)
+
+        except Exception:
+            # 防御式：任何一条失败不影响整体
+            continue
     return content
-
-
+    
 # def get_news(keyword):
 #     url = f"https://news.google.com/search?q={keyword}&hl=en-PH&gl=PH&ceid=PH:en"
 #     news_url = f'https://news.google.com/rss/search?hl=en-PH&gl=PH&ceid=PH:en&q={selected_stock_name}'
